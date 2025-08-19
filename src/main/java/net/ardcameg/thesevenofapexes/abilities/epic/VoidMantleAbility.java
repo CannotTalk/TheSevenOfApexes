@@ -6,8 +6,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance; // ★ import
-import net.minecraft.world.effect.MobEffects;       // ★ import
+import net.minecraft.world.effect.MobEffects; // ★ importはまだ必要
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,11 +19,12 @@ public final class VoidMantleAbility {
     private static final Random RANDOM = new Random();
 
     private static final String SNEAK_TICKS_TAG = "VoidMantleSneakTicks";
-    // isVanishedタグは、もはやエフェクトの有無で判定できるので不要になる
+    // ★★★ 我々の能力による透明化であることを示す、独立したNBTタグを使う ★★★
+    private static final String MANTLE_INVISIBILITY_TAG = "MantleInvisibility";
 
     public static void updateEffect(Player player, int mantleCount, int prideMultiplier) {
         if (mantleCount <= 0) {
-            if (isVanished(player)) {
+            if (isVanishedByMantle(player)) {
                 unvanish(player);
             }
             return;
@@ -32,7 +32,7 @@ public final class VoidMantleAbility {
 
         if (player.isSprinting() || !player.isShiftKeyDown()) {
             player.getPersistentData().putInt(SNEAK_TICKS_TAG, 0);
-            if (isVanished(player)) {
+            if (isVanishedByMantle(player)) {
                 unvanish(player);
             }
             return;
@@ -42,18 +42,19 @@ public final class VoidMantleAbility {
         sneakTicks++;
         player.getPersistentData().putInt(SNEAK_TICKS_TAG, sneakTicks);
 
-        if (!isVanished(player)) {
+        if (!isVanishedByMantle(player)) {
             if (sneakTicks >= 60) {
                 if (player.getFoodData().getFoodLevel() > 0) {
                     vanish(player);
                 }
             }
         } else {
-            // 1. エフェクトが途切れないように、常に効果を更新し続ける
-            // 効果時間は短く(2秒=40tick)して、無駄な負荷を避ける
-            player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 40, 0, true, false, false));
+            // --- 既に外套で透明化している場合 ---
+            // 1. サーバーの同期に打ち勝つため、毎tick、強制的に透明化と装備非表示を命令し続ける
+            player.setInvisible(true);
+            hideEquipment(player);
 
-            // 2. 2秒ごとに満腹度を消費
+            // 2. 満腹度消費 (変更なし)
             if (player.level().getGameTime() % 40 == 0) {
                 if (player.getFoodData().getFoodLevel() > 0) {
                     player.getFoodData().addExhaustion(4.0f);
@@ -64,25 +65,28 @@ public final class VoidMantleAbility {
         }
     }
 
-    // ★★★ isVanishedの判定方法を、エフェクトの有無に変更 ★★★
-    private static boolean isVanished(Player player) {
-        return player.hasEffect(MobEffects.INVISIBILITY);
+    // ★★★ 判定を、NBTタグの有無に変更 ★★★
+    private static boolean isVanishedByMantle(Player player) {
+        return player.getPersistentData().getBoolean(MANTLE_INVISIBILITY_TAG);
     }
 
     private static void vanish(Player player) {
-        // ★★★ player.setInvisible(true) の代わりに、透明化エフェクトを付与 ★★★
-        // 効果時間を長く(例:10秒)設定し、tickごとに更新することで、エフェクトが途切れないようにする
-        // Amplifier 0 = Level 1, アンビエント(パーティクル減), パーティクル非表示, アイコン非表示
-        player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 200, 0, true, false, false));
-        hideArmor(player);
+        player.getPersistentData().putBoolean(MANTLE_INVISIBILITY_TAG, true); // ★ 証拠を残す
+        player.setInvisible(true); // ★ 直接的な命令を使う
+        hideEquipment(player);
         player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.5f);
     }
 
     private static void unvanish(Player player) {
-        // ★★★ player.setInvisible(false) の代わりに、エフェクトを解除 ★★★
-        player.removeEffect(MobEffects.INVISIBILITY);
+        player.getPersistentData().remove(MANTLE_INVISIBILITY_TAG); // ★ 証拠を消す
         player.getPersistentData().remove(SNEAK_TICKS_TAG);
-        showArmor(player);
+
+        // もしプレイヤーが、他の理由（ポーションなど）で透明化しているなら、setInvisible(false)は呼び出さない
+        if (!player.hasEffect(MobEffects.INVISIBILITY)) {
+            player.setInvisible(false);
+        }
+
+        showEquipment(player);
         player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 0.5f);
 
         // --- 消失判定 (変更なし) ---
@@ -96,8 +100,7 @@ public final class VoidMantleAbility {
         }
     }
 
-    // 他のプレイヤーに、このプレイヤーの防具が見えなくなるようにパケットを送信する
-    private static void hideArmor(Player player) {
+    private static void hideEquipment(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             List<com.mojang.datafixers.util.Pair<EquipmentSlot, ItemStack>> equipment = List.of(
                     com.mojang.datafixers.util.Pair.of(EquipmentSlot.HEAD, ItemStack.EMPTY),
@@ -109,8 +112,7 @@ public final class VoidMantleAbility {
         }
     }
 
-    // 他のプレイヤーに、このプレイヤーの防具が再び見えるようにパケットを送信する
-    private static void showArmor(Player player) {
+    private static void showEquipment(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             List<com.mojang.datafixers.util.Pair<EquipmentSlot, ItemStack>> equipment = List.of(
                     com.mojang.datafixers.util.Pair.of(EquipmentSlot.HEAD, player.getItemBySlot(EquipmentSlot.HEAD)),
@@ -119,6 +121,7 @@ public final class VoidMantleAbility {
                     com.mojang.datafixers.util.Pair.of(EquipmentSlot.FEET, player.getItemBySlot(EquipmentSlot.FEET))
             );
             serverPlayer.connection.send(new ClientboundSetEquipmentPacket(player.getId(), equipment));
+            // インベントリの再同期は、防具だけなら不要
         }
     }
 }

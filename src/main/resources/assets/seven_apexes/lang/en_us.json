@@ -1,0 +1,35 @@
+{
+  "item.seven_apexes.legendary_pride": "Pride",
+  "item.seven_apexes.legendary_envy": "Envy",
+  "item.seven_apexes.legendary_wrath": "Wrath",
+  "item.seven_apexes.legendary_sloth": "Sloth",
+  "item.seven_apexes.legendary_greed": "Greed",
+  "item.seven_apexes.legendary_gluttony": "Gluttony",
+  "item.seven_apexes.legendary_lust": "Lust",
+  "item.seven_apexes.legendary_sunlight_sacred_seal": "Sunlight Sacred Seal",
+  "item.seven_apexes.legendary_moonlight_sacred_seal": "Moonlight Sacred Seal",
+
+  "item.seven_apexes.epic_lightning_fist": "Lightning Fist",
+  "item.seven_apexes.epic_phoenix_feather": "Phoenix Feather",
+  "item.seven_apexes.epic_life_steel_stick": "Life Steel Stick",
+  "item.seven_apexes.epic_berserkers_drag": "Berserker's Drag",
+  "item.seven_apexes.epic_shadow_bind_gloves": "Shadow-Bind Gloves",
+  "item.seven_apexes.epic_arrival_of_revival": "Arrival of Revival",
+  "item.seven_apexes.epic_walking_anathema": "Walking Anathema",
+  "item.seven_apexes.epic_scarred_grail": "Scarred Grail",
+  "item.seven_apexes.epic_void_mantle": "Mantle of the void",
+  "item.seven_apexes.epic_steel_claws": "Claws of Steel",
+  "item.seven_apexes.epic_fiends_bargain": "Fiend's Bargain",
+  "item.seven_apexes.epic_reversal_hourglass": "Hourglass of Reversal",
+  "item.seven_apexes.epic_goliaths_gavel": "Goliath's Gavel",
+
+  "item.seven_apexes.rare_night_owl_eyes": "Eyes of the Night Owl",
+  "item.seven_apexes.rare_guardians_crest": "Guardian's Crest",
+  "item.seven_apexes.rare_gills_charm": "Gills Charm",
+  "item.seven_apexes.rare_snipers_monocle": "Sniper's Monocle",
+
+  "key.category.seven_apexes": "The Seven of Apexes",
+  "key.seven_apexes.eat_block": "Eat Block",
+
+  "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s"
+}
