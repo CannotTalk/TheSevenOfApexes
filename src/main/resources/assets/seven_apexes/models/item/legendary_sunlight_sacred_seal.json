@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "seven_apexes:item/legendary_sunlight_sacred_seal"
+  }
+}
