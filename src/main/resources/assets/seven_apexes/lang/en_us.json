@@ -27,9 +27,28 @@
   "item.seven_apexes.rare_guardians_crest": "Guardian's Crest",
   "item.seven_apexes.rare_gills_charm": "Gills Charm",
   "item.seven_apexes.rare_snipers_monocle": "Sniper's Monocle",
+  "item.seven_apexes.rare_last_stand": "Last Stand",
+  "item.seven_apexes.rare_blademasters_prowess": "Blademaster's Prowess",
+  "item.seven_apexes.rare_deadeye_glass": "Deadeye Glass",
+  "item.seven_apexes.rare_reapers_scythe": "Reaper's Scythe",
+  "item.seven_apexes.rare_architects_haste": "Architect's Haste",
+  "item.seven_apexes.rare_vital_conversion_ring": "Ring of Vital Conversion",
+  "item.seven_apexes.rare_bounty_totem": "Totem of Bounty",
+  "item.seven_apexes.rare_hungry_banquet": "Hungry Banquet",
+
+  "item.seven_apexes.uncommon_pearl_eye": "Eye of the Pearl",
+  "item.seven_apexes.uncommon_miniature_figurehead": "Miniature Figurehead",
+
+
+  "item.seven_apexes.random_pack": "Random Pack",
+  "item.seven_apexes.rare_pack": "Rare Pack",
+  "item.seven_apexes.epic_pack": "Epic Pack",
+  "item.seven_apexes.legendary_pack": "Legendary Pack",
 
   "key.category.seven_apexes": "The Seven of Apexes",
   "key.seven_apexes.eat_block": "Eat Block",
+
+  "creativetab.seven_apexes.seven_apexes_item": "The Seven of Apexes",
 
   "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s"
 }

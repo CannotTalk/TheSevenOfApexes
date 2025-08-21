@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes;
 
+import net.ardcameg.thesevenofapexes.item.ModCreativeModeTab;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
@@ -32,6 +33,7 @@ public class TheSevenOfApexes {
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+        ModCreativeModeTab.register(modEventBus);
 
         ModItems.register(modEventBus);
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
@@ -53,9 +55,7 @@ public class TheSevenOfApexes {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS){
-            event.accept(ModItems.LEGENDARY_WRATH);
-        }
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

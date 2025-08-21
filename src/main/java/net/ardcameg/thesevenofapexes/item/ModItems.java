@@ -120,6 +120,63 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.RARE)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_BLADEMASTERS_PROWESS = ITEMS.register("rare_blademasters_prowess",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_DEADEYE_GLASS = ITEMS.register("rare_deadeye_glass",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_REAPERS_SCYTHE = ITEMS.register("rare_reapers_scythe",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_ARCHITECTS_HASTE = ITEMS.register("rare_architects_haste",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_VITAL_CONVERSION_RING = ITEMS.register("rare_vital_conversion_ring",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_BOUNTY_TOTEM = ITEMS.register("rare_bounty_totem",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> RARE_HUNGRY_BANQUET = ITEMS.register("rare_hungry_banquet",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .stacksTo(1)));
+
+    public static final DeferredItem<Item> UNCOMMON_PEARL_EYE = ITEMS.register("uncommon_pearl_eye",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_SCENT_OF_COMPOST = ITEMS.register("uncommon_scent_of_compost",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_FERTILE_CLOD = ITEMS.register("uncommon_fertile_clod",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+
+
+
+    // --- パックアイテム ---
+    public static final DeferredItem<Item> RANDOM_PACK = ITEMS.register("random_pack",
+            () -> new RandomPackItem(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> RARE_PACK = ITEMS.register("rare_pack",
+            () -> new RarePackItem(new Item.Properties()
+                    .rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> EPIC_PACK = ITEMS.register("epic_pack",
+            () -> new EpicPackItem(new Item.Properties()
+                    .rarity(Rarity.EPIC)));
+    public static final DeferredItem<Item> LEGENDARY_PACK = ITEMS.register("legendary_pack",
+            () -> new LegendaryPackItem(new GlintingItem.Properties()
+                    .rarity(Rarity.COMMON)));
 
 
     public static void register(IEventBus eventBus) {
