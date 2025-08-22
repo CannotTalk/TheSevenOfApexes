@@ -22,6 +22,7 @@
   "item.seven_apexes.epic_fiends_bargain": "Fiend's Bargain",
   "item.seven_apexes.epic_reversal_hourglass": "Hourglass of Reversal",
   "item.seven_apexes.epic_goliaths_gavel": "Goliath's Gavel",
+  "item.seven_apexes.epic_heart_of_storm": "Heart of Storm",
 
   "item.seven_apexes.rare_night_owl_eyes": "Eyes of the Night Owl",
   "item.seven_apexes.rare_guardians_crest": "Guardian's Crest",
@@ -37,7 +38,16 @@
   "item.seven_apexes.rare_hungry_banquet": "Hungry Banquet",
 
   "item.seven_apexes.uncommon_pearl_eye": "Eye of the Pearl",
-  "item.seven_apexes.uncommon_miniature_figurehead": "Miniature Figurehead",
+  "item.seven_apexes.uncommon_scent_of_compost": "Scent of Compost",
+  "item.seven_apexes.uncommon_fertile_clod": "Fertile Clod",
+  "item.seven_apexes.uncommon_lucky_flint":  "Lucky Flint",
+  "item.seven_apexes.uncommon_redundant_flint": "Redundant Flint",
+  "item.seven_apexes.uncommon_healing_linens": "Healing Linens",
+  "item.seven_apexes.uncommon_spiders_warp": "Spider's Warp",
+  "item.seven_apexes.uncommon_secret_art_of_sewing": "Secret Art of Sewing",
+
+  "item.seven_apexes.common_shining_aura": "Shining Aura",
+  "item.seven_apexes.common_emperors_new_clothes": "Emperor's New Clothes",
 
 
   "item.seven_apexes.random_pack": "Random Pack",

@@ -41,6 +41,7 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.EPIC_FIENDS_BARGAIN);
                         output.accept(ModItems.EPIC_REVERSAL_HOURGLASS);
                         output.accept(ModItems.EPIC_GOLIATHS_GAVEL);
+                        output.accept(ModItems.EPIC_HEART_OF_STORM);
 
                         output.accept(ModItems.RARE_GUARDIANS_CREST);
                         output.accept(ModItems.RARE_GILLS_CHARM);
@@ -57,6 +58,14 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.UNCOMMON_PEARL_EYE);
                         output.accept(ModItems.UNCOMMON_SCENT_OF_COMPOST);
                         output.accept(ModItems.UNCOMMON_FERTILE_CLOD);
+                        output.accept(ModItems.UNCOMMON_LUCKY_FLINT);
+                        output.accept(ModItems.UNCOMMON_REDUNDANT_FLINT);
+                        output.accept(ModItems.UNCOMMON_HEALING_LINENS);
+                        output.accept(ModItems.UNCOMMON_SPIDERS_WARP);
+                        output.accept(ModItems.UNCOMMON_SECRET_ART_OF_SEWING);
+
+                        output.accept(ModItems.COMMON_SHINING_AURA);
+                        output.accept(ModItems.COMMON_EMPERORS_NEW_CLOTHES);
 
 
                         output.accept(ModItems.RANDOM_PACK);

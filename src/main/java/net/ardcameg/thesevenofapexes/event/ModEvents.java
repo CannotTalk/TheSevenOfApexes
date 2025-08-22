@@ -5,6 +5,7 @@ import net.ardcameg.thesevenofapexes.abilities.epic.*;
 import net.ardcameg.thesevenofapexes.abilities.legendary.*;
 import net.ardcameg.thesevenofapexes.abilities.rare.*;
 import net.ardcameg.thesevenofapexes.abilities.uncommon.*;
+import net.ardcameg.thesevenofapexes.abilities.common.*;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
@@ -17,13 +18,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ComposterBlock;
@@ -37,11 +38,11 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -76,18 +77,29 @@ public class ModEvents {
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-        if (baseCounts.containsKey(ModItems.LEGENDARY_WRATH.get()) && attacker != null) {
-            WrathAbility.apply(player, attacker, baseCounts.get(ModItems.LEGENDARY_WRATH.get()), prideMultiplier);
+        int wrathCount = baseCounts.getOrDefault(ModItems.LEGENDARY_WRATH.get(), 0);
+        if (wrathCount > 0 && attacker != null) {
+            WrathAbility.apply(player, attacker, wrathCount, prideMultiplier);
         }
-        if (baseCounts.containsKey(ModItems.EPIC_REVERSAL_HOURGLASS.get()) && attacker != null) {
-            ReversalHourglassAbility.onPlayerDamaged(event, player, attacker, baseCounts.get(ModItems.EPIC_REVERSAL_HOURGLASS.get()), prideMultiplier);
+
+        int heartOfStormCount = baseCounts.getOrDefault(ModItems.EPIC_HEART_OF_STORM.get(), 0);
+        if (heartOfStormCount > 0 && attacker != null) {
+            HeartOfStormAbility.apply(player, attacker, heartOfStormCount, prideMultiplier, STUNNED_ENTITIES);
         }
-        if (baseCounts.containsKey(ModItems.EPIC_LIGHTNING_FIST.get())) {
+
+        int reversalHourglassCount = baseCounts.getOrDefault(ModItems.EPIC_REVERSAL_HOURGLASS.get(), 0);
+        if (reversalHourglassCount > 0 && attacker != null) {
+            ReversalHourglassAbility.onPlayerDamaged(event, player, attacker, reversalHourglassCount, prideMultiplier);
+        }
+
+        int lightningFistCount = baseCounts.getOrDefault(ModItems.EPIC_LIGHTNING_FIST.get(), 0);
+        if (lightningFistCount > 0) {
             int lastChainCount = player.getPersistentData().getInt(LightningFistAbility.CHAIN_COUNT_TAG);
             if (lastChainCount > 0) {
                 player.setHealth(player.getHealth() - lastChainCount);
             }
         }
+
         int scytheCount = baseCounts.getOrDefault(ModItems.RARE_REAPERS_SCYTHE.get(), 0);
         if (scytheCount > 0) {
             if (attacker != null && attacker != player) {
@@ -105,19 +117,27 @@ public class ModEvents {
         Entity attacker = event.getSource().getEntity();
 
         if (attacker instanceof Player player && target instanceof LivingEntity livingTarget) {
+
             if (player.level().isClientSide) return;
+
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if (baseCounts.isEmpty()) return;
+
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            if (baseCounts.containsKey(ModItems.LEGENDARY_ENVY.get())) {
-                EnvyAbility.apply(player, livingTarget, ENVY_COPIED_ENTITIES, baseCounts.get(ModItems.LEGENDARY_ENVY.get()), prideMultiplier);
+            int envyCount = baseCounts.getOrDefault(ModItems.LEGENDARY_ENVY, 0);
+            if (envyCount > 0) {
+                EnvyAbility.apply(player, livingTarget, ENVY_COPIED_ENTITIES, envyCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.EPIC_FIENDS_BARGAIN.get())) {
-                FiendsBargainAbility.apply(event, player, livingTarget, baseCounts.get(ModItems.EPIC_FIENDS_BARGAIN.get()), prideMultiplier);
+
+            int fiendsBargainCount = baseCounts.getOrDefault(ModItems.EPIC_FIENDS_BARGAIN.get(), 0);
+            if (fiendsBargainCount > 0) {
+                FiendsBargainAbility.apply(event, player, livingTarget, fiendsBargainCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.RARE_DEADEYE_GLASS.get())) {
+
+            int deadeyeGlassCount = baseCounts.getOrDefault(ModItems.RARE_DEADEYE_GLASS.get(), 0);
+            if (deadeyeGlassCount > 0) {
                 if (!CRITICAL_HIT_FLAG.contains(player.getUUID())) {
                     DeadeyeGlassAbility.onNormalAttack(event);
                 }
@@ -131,19 +151,26 @@ public class ModEvents {
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            if (baseCounts.containsKey(ModItems.UNCOMMON_PEARL_EYE.get())) {
-                PearlEyeAbility.reduceEnderPearlDamage(event, baseCounts.get(ModItems.UNCOMMON_PEARL_EYE.get()), prideMultiplier);
+            int pearlEyeCount = baseCounts.getOrDefault(ModItems.UNCOMMON_PEARL_EYE, 0);
+            if (pearlEyeCount > 0) {
+                PearlEyeAbility.reduceEnderPearlDamage(event, pearlEyeCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.RARE_HUNGRY_BANQUET.get())) {
-                HungryBanquetAbility.convertDamageToHunger(event, player, baseCounts.get(ModItems.RARE_HUNGRY_BANQUET.get()), prideMultiplier);
+
+            int hungryBanquetCount = baseCounts.getOrDefault(ModItems.RARE_HUNGRY_BANQUET.get(), 0);
+            if (hungryBanquetCount > 0) {
+                HungryBanquetAbility.convertDamageToHunger(event, player, hungryBanquetCount, prideMultiplier);
                 if (event.getNewDamage() <= 0) return;
             }
-            if (baseCounts.containsKey(ModItems.EPIC_SCARRED_GRAIL.get())) {
+
+            int scarredGrailCount = baseCounts.getOrDefault(ModItems.EPIC_SCARRED_GRAIL.get(), 0);
+            if (scarredGrailCount > 0) {
                 ScarredGrailAbility.onPlayerDamaged(event, player);
                 if (event.getNewDamage() == 0) return;
             }
-            if (baseCounts.containsKey(ModItems.EPIC_BERSERKERS_DRAG.get())) {
-                BerserkersDragAbility.onPlayerDamaged(event, player, baseCounts.get(ModItems.EPIC_BERSERKERS_DRAG.get()), prideMultiplier);
+
+            int berserkersDragCount = baseCounts.getOrDefault(ModItems.EPIC_BERSERKERS_DRAG.get(), 0);
+            if (berserkersDragCount > 0) {
+                BerserkersDragAbility.onPlayerDamaged(event, player, berserkersDragCount, prideMultiplier);
             }
         }
     }
@@ -173,24 +200,53 @@ public class ModEvents {
 
         int sunSealCount = baseCounts.getOrDefault(ModItems.LEGENDARY_SUNLIGHT_SACRED_SEAL.get(), 0);
         int moonSealCount = baseCounts.getOrDefault(ModItems.LEGENDARY_MOONLIGHT_SACRED_SEAL.get(), 0);
-        SunlightSacredSealAbility.updateEffect(player, sunSealCount, prideMultiplier, sunSealCount > 0);
-        MoonlightSacredSealAbility.updateEffect(player, moonSealCount, prideMultiplier, moonSealCount > 0, PLAYER_LAST_POSITION);
+        boolean hasSunSeal = sunSealCount > 0;
+        boolean hasMoonSeal = moonSealCount > 0;
+        SunlightSacredSealAbility.updateEffect(player, sunSealCount, prideMultiplier, hasMoonSeal);
+        MoonlightSacredSealAbility.updateEffect(player, moonSealCount, prideMultiplier, hasSunSeal, PLAYER_LAST_POSITION);
 
-        LifeSteelStickAbility.updatePassiveDebuff(player, baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEEL_STICK.get(), 0));
-        BerserkersDragAbility.updateEffect(player, baseCounts.getOrDefault(ModItems.EPIC_BERSERKERS_DRAG.get(), 0), prideMultiplier);
-        WalkingAnathemaAbility.applyAura(player, baseCounts.getOrDefault(ModItems.EPIC_WALKING_ANATHEMA.get(), 0), prideMultiplier);
-        VoidMantleAbility.updateEffect(player, baseCounts.getOrDefault(ModItems.EPIC_VOID_MANTLE.get(), 0), prideMultiplier);
-        ReversalHourglassAbility.updatePassiveDebuff(player, baseCounts.getOrDefault(ModItems.EPIC_REVERSAL_HOURGLASS.get(), 0));
-        GoliathsGavelAbility.updatePassiveEffect(player, baseCounts.getOrDefault(ModItems.EPIC_GOLIATHS_GAVEL.get(), 0), prideMultiplier);
+        int lifeSteelCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEEL_STICK.get(), 0);
+        LifeSteelStickAbility.updatePassiveDebuff(player, lifeSteelCount);
 
-        NightOwlEyesAbility.updateEffect(player, baseCounts.getOrDefault(ModItems.RARE_NIGHT_OWL_EYES.get(), 0), prideMultiplier);
-        GuardiansCrestAbility.updateEffect(player, baseCounts.getOrDefault(ModItems.RARE_GUARDIANS_CREST.get(), 0), prideMultiplier);
-        GillsCharmAbility.updateEffect(player, baseCounts.getOrDefault(ModItems.RARE_GILLS_CHARM.get(), 0), prideMultiplier);
-        SnipersMonocleAbility.updatePassiveDebuff(player, baseCounts.getOrDefault(ModItems.RARE_SNIPERS_MONOCLE.get(), 0), prideMultiplier);
-        LastStandAbility.updatePassiveBuffs(player, baseCounts.getOrDefault(ModItems.RARE_LAST_STAND.get(), 0), prideMultiplier);
-        BlademastersProwessAbility.updatePassiveBuffs(player, baseCounts.getOrDefault(ModItems.RARE_BLADEMASTERS_PROWESS.get(), 0), prideMultiplier);
-        DeadeyeGlassAbility.updatePassiveBuffs(player, baseCounts.getOrDefault(ModItems.RARE_DEADEYE_GLASS.get(), 0), prideMultiplier);
-        ArchitectsHasteAbility.updatePassiveBuffs(player, baseCounts.getOrDefault(ModItems.RARE_ARCHITECTS_HASTE.get(), 0), prideMultiplier);
+        int berserkersDragCount = baseCounts.getOrDefault(ModItems.EPIC_BERSERKERS_DRAG.get(), 0);
+        BerserkersDragAbility.updateEffect(player, berserkersDragCount, prideMultiplier);
+
+        int walkingAnathemaCount = baseCounts.getOrDefault(ModItems.EPIC_WALKING_ANATHEMA.get(), 0);
+        WalkingAnathemaAbility.applyAura(player, walkingAnathemaCount, prideMultiplier);
+
+        int voidMantleCount = baseCounts.getOrDefault(ModItems.EPIC_VOID_MANTLE.get(), 0);
+        VoidMantleAbility.updateEffect(player, voidMantleCount, prideMultiplier);
+
+        int reversalHourGlassCount = baseCounts.getOrDefault(ModItems.EPIC_REVERSAL_HOURGLASS.get(), 0);
+        ReversalHourglassAbility.updatePassiveDebuff(player, reversalHourGlassCount);
+
+        int goliathsGavelCount = baseCounts.getOrDefault(ModItems.EPIC_GOLIATHS_GAVEL.get(), 0);
+        GoliathsGavelAbility.updatePassiveEffect(player, goliathsGavelCount, prideMultiplier);
+
+
+        int nightOwlEyesCount = baseCounts.getOrDefault(ModItems.RARE_NIGHT_OWL_EYES.get(), 0);
+        NightOwlEyesAbility.updateEffect(player, nightOwlEyesCount, prideMultiplier);
+
+        int guardiansCrestCount = baseCounts.getOrDefault(ModItems.RARE_GUARDIANS_CREST.get(), 0);
+        GuardiansCrestAbility.updateEffect(player, guardiansCrestCount, prideMultiplier);
+
+        int gillsCharmCount = baseCounts.getOrDefault(ModItems.RARE_GILLS_CHARM.get(), 0);
+        GillsCharmAbility.updateEffect(player, gillsCharmCount, prideMultiplier);
+
+        int snipersMonocleCount = baseCounts.getOrDefault(ModItems.RARE_SNIPERS_MONOCLE.get(), 0);
+        SnipersMonocleAbility.updatePassiveDebuff(player, snipersMonocleCount, prideMultiplier);
+
+        int lastStandCount = baseCounts.getOrDefault(ModItems.RARE_LAST_STAND.get(), 0);
+        LastStandAbility.updatePassiveBuffs(player, lastStandCount, prideMultiplier);
+
+        int blademastersProwessCount = baseCounts.getOrDefault(ModItems.RARE_BLADEMASTERS_PROWESS.get(), 0);
+        BlademastersProwessAbility.updatePassiveBuffs(player, blademastersProwessCount, prideMultiplier);
+
+        int deadeyeGlassCount = baseCounts.getOrDefault(ModItems.RARE_DEADEYE_GLASS.get(), 0);
+        DeadeyeGlassAbility.updatePassiveBuffs(player, deadeyeGlassCount, prideMultiplier);
+
+        int architectsHasteCount = baseCounts.getOrDefault(ModItems.RARE_ARCHITECTS_HASTE.get(), 0);
+        ArchitectsHasteAbility.updatePassiveBuffs(player, architectsHasteCount, prideMultiplier);
 
         int ringCount = baseCounts.getOrDefault(ModItems.RARE_VITAL_CONVERSION_RING.get(), 0);
         if (ringCount > 0) {
@@ -201,6 +257,20 @@ public class ModEvents {
         int totemCount = baseCounts.getOrDefault(ModItems.RARE_BOUNTY_TOTEM.get(), 0);
         if (totemCount > 0) {
             handleBountyTotemAura(player, totemCount, prideMultiplier);
+        }
+
+        int spiderWarpCount = baseCounts.getOrDefault(ModItems.UNCOMMON_SPIDERS_WARP.get(), 0);
+        if (spiderWarpCount > 0) {
+            SpiderWarpAbility.apply(player, spiderWarpCount, prideMultiplier);
+        }
+
+        int shiningAuraCount = baseCounts.getOrDefault(ModItems.COMMON_SHINING_AURA.get(), 0);
+        // このアイテムは効果を更新する必要があるので、if文ではなく直接呼び出す
+        ShiningAuraAbility.updateEffect(player, shiningAuraCount, prideMultiplier);
+
+        int clothesCount = baseCounts.getOrDefault(ModItems.COMMON_EMPERORS_NEW_CLOTHES.get(), 0);
+        if (clothesCount > 0) {
+            EmperorsNewClothesAbility.apply(player, clothesCount, prideMultiplier);
         }
 
         int crestCount = baseCounts.getOrDefault(ModItems.RARE_GUARDIANS_CREST.get(), 0);
@@ -225,20 +295,24 @@ public class ModEvents {
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         if (!(event.getSource().getEntity() instanceof Player player)) return;
+
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         if (baseCounts.isEmpty()) return;
 
-        if (baseCounts.containsKey(ModItems.EPIC_WALKING_ANATHEMA.get())) {
-            if (event.getEntity() instanceof Enemy || event.getEntity() instanceof net.minecraft.world.entity.NeutralMob) {
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+        int walkingAnathemaCount = baseCounts.getOrDefault(ModItems.EPIC_WALKING_ANATHEMA.get(), 0);
+        if (walkingAnathemaCount > 0) {
+            if (event.getEntity() instanceof Enemy || event.getEntity() instanceof NeutralMob) {
                 event.getDrops().clear();
                 event.setCanceled(true);
             }
         }
 
-        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-        if (baseCounts.containsKey(ModItems.LEGENDARY_GREED.get())) {
-            GreedAbility.applyToMob(event, baseCounts.get(ModItems.LEGENDARY_GREED.get()), prideMultiplier);
+        int greedCount = baseCounts.getOrDefault(ModItems.LEGENDARY_GREED.get(), 0);
+        if (greedCount > 0) {
+            GreedAbility.applyToMob(event, greedCount, prideMultiplier);
         }
     }
 
@@ -255,16 +329,32 @@ public class ModEvents {
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-        if (baseCounts.containsKey(ModItems.LEGENDARY_GREED.get())) {
-            GreedAbility.applyToBlock(event, baseCounts.get(ModItems.LEGENDARY_GREED.get()), prideMultiplier);
+        int greedCount = baseCounts.getOrDefault(ModItems.LEGENDARY_GREED.get(), 0);
+        if (greedCount > 0) {
+            GreedAbility.applyToBlock(event, greedCount, prideMultiplier);
         }
-        if (baseCounts.containsKey(ModItems.RARE_ARCHITECTS_HASTE.get())) {
-            ArchitectsHasteAbility.applyDurabilityPenalty(player, baseCounts.get(ModItems.RARE_ARCHITECTS_HASTE.get()), prideMultiplier);
+
+        int architectsHasteCount = baseCounts.getOrDefault(ModItems.RARE_ARCHITECTS_HASTE.get(), 0);
+        if (architectsHasteCount > 0) {
+            ArchitectsHasteAbility.applyDurabilityPenalty(player, architectsHasteCount, prideMultiplier);
         }
+
+        int bountyTotem = baseCounts.getOrDefault(ModItems.RARE_BOUNTY_TOTEM.get(), 0);
         if (event.getState().getBlock() instanceof CropBlock) {
-            if (baseCounts.containsKey(ModItems.RARE_BOUNTY_TOTEM.get())) {
-                BountyTotemAbility.degradeFarmland(event, baseCounts.get(ModItems.RARE_BOUNTY_TOTEM.get()), prideMultiplier);
+            if (bountyTotem > 0) {
+                BountyTotemAbility.degradeFarmland(event, bountyTotem, prideMultiplier);
             }
+        }
+
+        int luckyFlintCount = baseCounts.getOrDefault(ModItems.UNCOMMON_LUCKY_FLINT.get(), 0);
+        if (luckyFlintCount > 0) {
+            LuckyFlintAbility.apply(event, luckyFlintCount, prideMultiplier);
+        }
+
+        int redundantFlintCount = baseCounts.getOrDefault(ModItems.UNCOMMON_REDUNDANT_FLINT.get(), 0);
+        if (redundantFlintCount > 0) {
+            RedundantFlintAbility.apply(event, redundantFlintCount, prideMultiplier);
+            return;
         }
     }
 
@@ -286,31 +376,37 @@ public class ModEvents {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerDeath(LivingDeathEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) return;
+
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         if(baseCounts.isEmpty()) return;
+
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
         if (player.getPersistentData().getBoolean("TAKING_GRAIL_DAMAGE")) {
             if (GRAIL_DAMAGE_FLAG.contains(player.getUUID())) return;
             GRAIL_DAMAGE_FLAG.add(player.getUUID());
         }
 
-        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-
-        if (baseCounts.containsKey(ModItems.LEGENDARY_LUST.get())) {
-            if (LustAbility.attemptRevive(player, event.getSource().getEntity(), baseCounts.get(ModItems.LEGENDARY_LUST.get()), prideMultiplier)) {
+        int lustCount = baseCounts.getOrDefault(ModItems.LEGENDARY_LUST.get(), 0);
+        if (lustCount > 0) {
+            if (LustAbility.attemptRevive(player, event.getSource().getEntity(), lustCount, prideMultiplier)) {
                 event.setCanceled(true);
                 return;
             }
         }
-        if (baseCounts.containsKey(ModItems.EPIC_PHOENIX_FEATHER.get())) {
+
+        int phoenixFeatherCount = baseCounts.getOrDefault(ModItems.EPIC_PHOENIX_FEATHER.get(), 0);
+        if (phoenixFeatherCount > 0) {
             if (PhoenixFeatherAbility.attemptRevive(player)) {
                 event.setCanceled(true);
                 return;
             }
         }
-        if (baseCounts.containsKey(ModItems.EPIC_ARRIVAL_OF_REVIVAL.get())) {
-            if (ArrivalOfRevivalAbility.attemptRevive(player, baseCounts.get(ModItems.EPIC_ARRIVAL_OF_REVIVAL.get()), prideMultiplier)) {
+
+        int arrivalOfRevivalCount = baseCounts.getOrDefault(ModItems.EPIC_ARRIVAL_OF_REVIVAL.get(), 0);
+        if (arrivalOfRevivalCount > 0) {
+            if (ArrivalOfRevivalAbility.attemptRevive(player, arrivalOfRevivalCount, prideMultiplier)) {
                 event.setCanceled(true);
                 return;
             }
@@ -323,32 +419,50 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerAttackPostDamage(LivingDamageEvent.Post event) {
         if (event.getSource().getEntity() instanceof Player player && event.getEntity() instanceof LivingEntity target) {
+
             if (player.level().isClientSide) return;
+
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if(baseCounts.isEmpty()) return;
+
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            if (baseCounts.containsKey(ModItems.EPIC_LIGHTNING_FIST.get()) && target instanceof Enemy) {
-                LightningFistAbility.applyAttackEffect(player, target, event.getNewDamage(), baseCounts.get(ModItems.EPIC_LIGHTNING_FIST.get()), prideMultiplier);
+            int lightningFistCount = baseCounts.getOrDefault(ModItems.EPIC_LIGHTNING_FIST.get(), 0);
+            if (lightningFistCount > 0 && target instanceof Enemy) {
+                LightningFistAbility.applyAttackEffect(player, target, event.getNewDamage(), lightningFistCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.EPIC_LIFE_STEEL_STICK.get())) {
-                LifeSteelStickAbility.applyLifeSteal(player, target, baseCounts.get(ModItems.EPIC_LIFE_STEEL_STICK.get()), prideMultiplier);
+
+            int lifeSteelStickCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEEL_STICK.get(), 0);
+            if (lifeSteelStickCount > 0) {
+                // 旧: LifeSteelStickAbility.applyLifeSteal(player, target, lifeSteelStickCount, prideMultiplier);
+                // 新: eventから実際に与えたダメージを取得して渡す
+                LifeSteelStickAbility.applyLifeSteal(player, event.getNewDamage(), lifeSteelStickCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.EPIC_SHADOW_BIND_GLOVES.get())) {
-                ShadowBindGlovesAbility.apply(player, target, baseCounts.get(ModItems.EPIC_SHADOW_BIND_GLOVES.get()), prideMultiplier, STUNNED_ENTITIES);
+
+            int shadowBindGlovesCount = baseCounts.getOrDefault(ModItems.EPIC_SHADOW_BIND_GLOVES.get(), 0);
+            if (shadowBindGlovesCount > 0) {
+                ShadowBindGlovesAbility.apply(player, target, shadowBindGlovesCount, prideMultiplier, STUNNED_ENTITIES);
             }
-            if (baseCounts.containsKey(ModItems.EPIC_STEEL_CLAWS.get())) {
-                SteelClawsAbility.apply(player, target, baseCounts.get(ModItems.EPIC_STEEL_CLAWS.get()), prideMultiplier);
+
+            int steelClawsCount = baseCounts.getOrDefault(ModItems.EPIC_STEEL_CLAWS.get(), 0);
+            if (steelClawsCount > 0) {
+                SteelClawsAbility.apply(player, target, steelClawsCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.EPIC_GOLIATHS_GAVEL.get())) {
-                GoliathsGavelAbility.applyAreaDamage(player, target, baseCounts.get(ModItems.EPIC_GOLIATHS_GAVEL.get()), prideMultiplier);
+
+            int goliathsGavelCount = baseCounts.getOrDefault(ModItems.EPIC_GOLIATHS_GAVEL.get(), 0);
+            if (goliathsGavelCount > 0) {
+                GoliathsGavelAbility.applyAreaDamage(player, target, goliathsGavelCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.RARE_REAPERS_SCYTHE.get())) {
-                ReapersScytheAbility.applyWitherOnAttack(target, baseCounts.get(ModItems.RARE_REAPERS_SCYTHE.get()), prideMultiplier);
+
+            int reapersScytheCount = baseCounts.getOrDefault(ModItems.RARE_REAPERS_SCYTHE.get(), 0);
+            if (reapersScytheCount > 0) {
+                ReapersScytheAbility.applyWitherOnAttack(target, reapersScytheCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.RARE_ARCHITECTS_HASTE.get())) {
-                ArchitectsHasteAbility.applyDurabilityPenalty(player, baseCounts.get(ModItems.RARE_ARCHITECTS_HASTE.get()), prideMultiplier);
+
+            int architectsHasteCount = baseCounts.getOrDefault(ModItems.RARE_ARCHITECTS_HASTE.get(), 0);
+            if (architectsHasteCount > 0) {
+                ArchitectsHasteAbility.applyDurabilityPenalty(player, architectsHasteCount, prideMultiplier);
             }
         }
     }
@@ -375,16 +489,21 @@ public class ModEvents {
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.projectile.AbstractArrow arrow && arrow.getOwner() instanceof Player player) {
             if (player.level().isClientSide) return;
+
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if (baseCounts.isEmpty()) return;
+
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            if (baseCounts.containsKey(ModItems.RARE_SNIPERS_MONOCLE.get())) {
-                SnipersMonocleAbility.onArrowFired(event, player, baseCounts.get(ModItems.RARE_SNIPERS_MONOCLE.get()), prideMultiplier);
+            int snipersMonocleCount = baseCounts.getOrDefault(ModItems.RARE_SNIPERS_MONOCLE.get(), 0);
+            if (snipersMonocleCount > 0) {
+                SnipersMonocleAbility.onArrowFired(event, player, snipersMonocleCount, prideMultiplier);
             }
-            if (baseCounts.containsKey(ModItems.RARE_BLADEMASTERS_PROWESS.get())) {
-                BlademastersProwessAbility.onArrowFired(event, baseCounts.get(ModItems.RARE_BLADEMASTERS_PROWESS.get()), prideMultiplier);
+
+            int blademastersProwessCount = baseCounts.getOrDefault(ModItems.RARE_BLADEMASTERS_PROWESS.get(), 0);
+            if (blademastersProwessCount > 0) {
+                BlademastersProwessAbility.onArrowFired(event, blademastersProwessCount, prideMultiplier);
             }
         }
     }
@@ -395,12 +514,18 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerHeal(LivingHealEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) return;
+
+
+        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
+        if (baseCounts.isEmpty()) return;
+
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
         if (player.getHealth() <= player.getMaxHealth() * 0.25f) {
-            Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-            if (baseCounts.containsKey(ModItems.RARE_LAST_STAND.get())) {
-                int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-                int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-                LastStandAbility.onPlayerHeal(event, baseCounts.get(ModItems.RARE_LAST_STAND.get()), prideMultiplier);
+            int lastStandCount = baseCounts.getOrDefault(ModItems.RARE_LAST_STAND.get(), 0);
+            if (lastStandCount > 0) {
+                LastStandAbility.onPlayerHeal(event, lastStandCount, prideMultiplier);
             }
         }
     }
@@ -411,12 +536,18 @@ public class ModEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPlayerCriticalHit(CriticalHitEvent event) {
         Player player = event.getEntity();
+
         if (player.level().isClientSide) return;
+
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-        if (baseCounts.containsKey(ModItems.RARE_DEADEYE_GLASS.get())) {
-            int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-            int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-            DeadeyeGlassAbility.onCriticalHit(event, baseCounts.get(ModItems.RARE_DEADEYE_GLASS.get()), prideMultiplier);
+        if (baseCounts.isEmpty()) return;
+
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+        int deadeyeGlassCount = baseCounts.getOrDefault(ModItems.RARE_DEADEYE_GLASS.get(), 0);
+        if (deadeyeGlassCount > 0) {
+            DeadeyeGlassAbility.onCriticalHit(event, deadeyeGlassCount, prideMultiplier);
 
             if (event.isCriticalHit()) {
                 CRITICAL_HIT_FLAG.add(player.getUUID());
@@ -437,16 +568,28 @@ public class ModEvents {
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
 
+        if (level.isClientSide) return;
+
+        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
+        if (baseCounts.isEmpty()) return;
+
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+        int sewingCount = baseCounts.getOrDefault(ModItems.UNCOMMON_SECRET_ART_OF_SEWING.get(), 0);
+        if (sewingCount > 0) {
+            SecretArtOfSewingAbility.apply(event, sewingCount, prideMultiplier);
+            if (event.isCanceled()) return;
+        }
+
         if (level.getBlockState(pos).getBlock() instanceof ComposterBlock) {
             if (!ComposterBlock.COMPOSTABLES.containsKey(event.getItemStack().getItem())) return;
-            if (player.level().isClientSide) return;
-            Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-            if (baseCounts.containsKey(ModItems.UNCOMMON_SCENT_OF_COMPOST.get())) {
-                int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-                int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+            int scentOfCompostCount = baseCounts.getOrDefault(ModItems.UNCOMMON_SCENT_OF_COMPOST.get(), 0);
+            if (scentOfCompostCount > 0) {
                 player.getServer().tell(new net.minecraft.server.TickTask(player.getServer().getTickCount() + 1, () ->
                         ScentOfCompostAbility.tryBoostComposter(
-                                (ServerLevel) level, pos, baseCounts.get(ModItems.UNCOMMON_SCENT_OF_COMPOST.get()), prideMultiplier
+                                (ServerLevel) level, pos, scentOfCompostCount, prideMultiplier
                         )
                 ));
             }
@@ -454,15 +597,37 @@ public class ModEvents {
         }
 
         if (event.getItemStack().is(Items.BONE_MEAL)) {
-            if (level.isClientSide) return;
-            Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-            if (baseCounts.containsKey(ModItems.UNCOMMON_FERTILE_CLOD.get())) {
-                int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-                int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-                FertileClodAbility.tryExtraBonemeal((ServerLevel) level, pos, baseCounts.get(ModItems.UNCOMMON_FERTILE_CLOD.get()), prideMultiplier);
+            int fertileClodCount = baseCounts.getOrDefault(ModItems.UNCOMMON_FERTILE_CLOD.get(), 0);
+            if (fertileClodCount > 0) {
+                FertileClodAbility.tryExtraBonemeal((ServerLevel) level, pos, fertileClodCount, prideMultiplier);
             }
         }
     }
+
+    /**
+     * 任務18：プレイヤーがベッドから起きた瞬間の処理
+     */
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
+        Player player = event.getEntity();
+        // サーバーサイドであり、かつワールドの時刻が朝になっている（＝夜を正常に過ごした）場合のみ処理
+        if (player.level().isClientSide() || !player.level().isDay()) {
+            return;
+        }
+
+        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
+        if (baseCounts.isEmpty()) return;
+
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+        int healingLinensCount = baseCounts.getOrDefault(ModItems.UNCOMMON_HEALING_LINENS.get(), 0);
+        if (healingLinensCount > 0) {
+            HealingLinensAbility.apply(player, healingLinensCount, prideMultiplier);
+        }
+    }
+
+
 
     // --- onPlayerTickから分離された、怠惰専用の処理メソッド ---
     private static void handleSloth(Player player, int baseSlothCount, int prideMultiplier) {

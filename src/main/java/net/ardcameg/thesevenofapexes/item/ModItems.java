@@ -99,6 +99,10 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> EPIC_HEART_OF_STORM = ITEMS.register("epic_heart_of_storm",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.EPIC)
+                    .stacksTo(1)));
 
     public static final DeferredItem<Item> RARE_NIGHT_OWL_EYES = ITEMS.register("rare_night_owl_eyes",
             () -> new Item(new Item.Properties()
@@ -161,6 +165,36 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.UNCOMMON)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_LUCKY_FLINT = ITEMS.register("uncommon_lucky_flint",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_REDUNDANT_FLINT = ITEMS.register("uncommon_redundant_flint",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_HEALING_LINENS = ITEMS.register("uncommon_healing_linens",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_SPIDERS_WARP = ITEMS.register("uncommon_spiders_warp",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> UNCOMMON_SECRET_ART_OF_SEWING = ITEMS.register("uncommon_secret_art_of_sewing",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.UNCOMMON)
+                    .stacksTo(1)));
+
+    public static final DeferredItem<Item> COMMON_SHINING_AURA = ITEMS.register("common_shining_aura",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_EMPERORS_NEW_CLOTHES = ITEMS.register("common_emperors_new_clothes",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+
 
 
 

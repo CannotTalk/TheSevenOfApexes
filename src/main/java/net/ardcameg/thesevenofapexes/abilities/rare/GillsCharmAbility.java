@@ -1,3 +1,5 @@
+// net/ardcameg/thesevenofapexes/abilities/rare/GillsCharmAbility.java
+
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LightLayer;
 
 public final class GillsCharmAbility {
     private GillsCharmAbility() {}
@@ -35,17 +38,27 @@ public final class GillsCharmAbility {
         if (player.isUnderWater()) {
             // --- 水中でのバフ ---
             player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 400, finalCount - 1, true, false, false));
-
             // バニラの水中での採掘速度は1/5になるので、それを5倍して元に戻す
             addModifier(miningSpeed, MINING_SPEED_BUFF_ID, 4.0, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         } else {
             // --- 地上でのデバフ ---
+            // 1. 移動速度低下
             addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, finalCount * -0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+
+            // 2. 日光下での渇き
+            // 空が見え、かつ太陽光が当たっている(光レベル15)かチェック
+            if (player.level().canSeeSky(player.blockPosition()) && player.level().getBrightness(LightLayer.SKY, player.blockPosition()) >= 15) {
+                // 1秒に1回(20tickに1回)判定
+                if (player.level().getGameTime() % 20 == 0) {
+                    // 1本あたり0.05の消耗を追加 (バニラのスプリントジャンプ並み)
+                    float exhaustion = 0.05f * finalCount;
+                    player.getFoodData().addExhaustion(exhaustion);
+                }
+            }
         }
     }
 
     private static void addModifier(AttributeInstance attribute, ResourceLocation id, double amount, AttributeModifier.Operation operation) {
-        // 念のため、古いものを削除してから追加する
         attribute.removeModifier(id);
         attribute.addPermanentModifier(new AttributeModifier(id, amount, operation));
     }

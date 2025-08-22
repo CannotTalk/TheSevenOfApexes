@@ -37,9 +37,14 @@ public final class PackLootManager {
             ModItems.RARE_VITAL_CONVERSION_RING.get(), ModItems.RARE_BOUNTY_TOTEM.get()
     );
 
-    // TODO: アンコモンとコモンのアイテムリストを後で追加
-    private static final List<Item> UNCOMMON_ITEMS = List.of();
-    private static final List<Item> COMMON_ITEMS = List.of();
+    private static final List<Item> UNCOMMON_ITEMS = List.of(
+            ModItems.UNCOMMON_PEARL_EYE.get(), ModItems.UNCOMMON_SCENT_OF_COMPOST.get(), ModItems.UNCOMMON_FERTILE_CLOD.get(),
+            ModItems.UNCOMMON_LUCKY_FLINT.get(), ModItems.UNCOMMON_REDUNDANT_FLINT.get(), ModItems.UNCOMMON_HEALING_LINENS.get(),
+            ModItems.UNCOMMON_SPIDERS_WARP.get(), ModItems.UNCOMMON_SECRET_ART_OF_SEWING.get()
+    );
+    private static final List<Item> COMMON_ITEMS = List.of(
+            ModItems.COMMON_SHINING_AURA.get(), ModItems.COMMON_EMPERORS_NEW_CLOTHES.get()
+    );
 
 
     /**
@@ -47,7 +52,6 @@ public final class PackLootManager {
      * @param player 開封したプレイヤー
      */
     public static void openRandomPack(Player player) {
-        // ★★★ ここからが修正箇所 ★★★
         // --- 最初に、特殊なパックが出現するかどうかを判定 ---
         double specialPackRoll = RANDOM.nextDouble();
 
