@@ -43,6 +43,7 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.EPIC_GOLIATHS_GAVEL);
                         output.accept(ModItems.EPIC_HEART_OF_STORM);
 
+                        output.accept(ModItems.RARE_NIGHT_OWL_EYES);
                         output.accept(ModItems.RARE_GUARDIANS_CREST);
                         output.accept(ModItems.RARE_GILLS_CHARM);
                         output.accept(ModItems.RARE_SNIPERS_MONOCLE);

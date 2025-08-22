@@ -24,7 +24,6 @@ public final class NightOwlEyesAbility {
         if (attackDamage == null || movementSpeed == null) return;
 
         // --- まず、全ての効果をリセットする ---
-        player.removeEffect(MobEffects.NIGHT_VISION);
         attackDamage.removeModifier(ATTACK_DAMAGE_DEBUFF_ID);
         movementSpeed.removeModifier(MOVEMENT_SPEED_DEBUFF_ID);
 
