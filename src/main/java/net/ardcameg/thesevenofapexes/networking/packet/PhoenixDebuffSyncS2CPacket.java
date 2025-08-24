@@ -13,7 +13,6 @@ public record PhoenixDebuffSyncS2CPacket(int remainingTicks) implements CustomPa
     public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "phoenix_debuff_sync");
     public static final Type<PhoenixDebuffSyncS2CPacket> TYPE = new Type<>(ID);
 
-    // ★★★ これが、あなたの世界の「StreamCodec」の、唯一の、そして最終的な正しい作り方です ★★★
     public static final StreamCodec<FriendlyByteBuf, PhoenixDebuffSyncS2CPacket> STREAM_CODEC = StreamCodec.of(
             (buf, packet) -> packet.write(buf), // 第1引数: 書き込み担当 (StreamEncoder)
             PhoenixDebuffSyncS2CPacket::new    // 第2引数: 読み込み担当 (StreamDecoder)

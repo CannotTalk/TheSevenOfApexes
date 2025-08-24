@@ -6,7 +6,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffects; // ★ importはまだ必要
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ public final class VoidMantleAbility {
     private static final Random RANDOM = new Random();
 
     private static final String SNEAK_TICKS_TAG = "VoidMantleSneakTicks";
-    // ★★★ 我々の能力による透明化であることを示す、独立したNBTタグを使う ★★★
+    // 我々の能力による透明化であることを示す、独立したNBTタグを使う
     private static final String MANTLE_INVISIBILITY_TAG = "MantleInvisibility";
 
     public static void updateEffect(Player player, int mantleCount, int prideMultiplier) {
@@ -65,20 +65,20 @@ public final class VoidMantleAbility {
         }
     }
 
-    // ★★★ 判定を、NBTタグの有無に変更 ★★★
+    // NBTタグの有無で判定
     private static boolean isVanishedByMantle(Player player) {
         return player.getPersistentData().getBoolean(MANTLE_INVISIBILITY_TAG);
     }
 
     private static void vanish(Player player) {
-        player.getPersistentData().putBoolean(MANTLE_INVISIBILITY_TAG, true); // ★ 証拠を残す
-        player.setInvisible(true); // ★ 直接的な命令を使う
+        player.getPersistentData().putBoolean(MANTLE_INVISIBILITY_TAG, true); // 証拠を残す
+        player.setInvisible(true);
         hideEquipment(player);
         player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 1.5f);
     }
 
     private static void unvanish(Player player) {
-        player.getPersistentData().remove(MANTLE_INVISIBILITY_TAG); // ★ 証拠を消す
+        player.getPersistentData().remove(MANTLE_INVISIBILITY_TAG); // 証拠を消す
         player.getPersistentData().remove(SNEAK_TICKS_TAG);
 
         // もしプレイヤーが、他の理由（ポーションなど）で透明化しているなら、setInvisible(false)は呼び出さない

@@ -42,13 +42,13 @@ public final class HeartOfStormAbility {
             lightning.setPos(attacker.position());
             serverLevel.addFreshEntity(lightning);
 
-            // 設計書通り、最大体力の20%のダメージを正確に与える
-            float damageAmount = livingAttacker.getMaxHealth() * 0.20f;
+            // 最大体力の25%のダメージを正確に与える
+            float damageAmount = livingAttacker.getMaxHealth() * 0.25f;
             livingAttacker.hurt(player.damageSources().lightningBolt(), damageAmount);
 
-            // --- 2. プレイヤーを1秒間スタンさせる ---
-            // 1秒 = 20 ticks
-            StunAbility.apply(player, 20, stunnedEntities);
+            // --- 2. プレイヤーを2秒間スタンさせる ---
+            // 2秒 = 40 ticks
+            StunAbility.apply(player, 40, stunnedEntities);
         }
     }
 }

@@ -1,7 +1,7 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
 import net.ardcameg.thesevenofapexes.item.ModItems;
-import net.ardcameg.thesevenofapexes.item.component.ModDataComponents; // ★★★
+import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -75,7 +75,7 @@ public final class ScarredGrailAbility {
         }
     }
 
-    // ★★★ Data Component を使った、新しいデータの読み込み方法 ★★★
+    //Data Component を使った、データの読み込み
     private static float getTotalStoredDamage(ItemStack grail) {
         List<Float> damageList = grail.get(ModDataComponents.STORED_DAMAGE.get());
         if (damageList == null) return 0;

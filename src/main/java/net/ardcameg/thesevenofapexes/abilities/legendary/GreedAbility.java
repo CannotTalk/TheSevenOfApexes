@@ -1,9 +1,7 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,12 +17,13 @@ public final class GreedAbility {
     /**
      * Mobのドロップを指定された倍率にする
      * @param event Mobがドロップする瞬間のイベント
-     * @param finalCount "強欲"の素の所持数
-     * @param multiplier "強欲"には使われない
+     * @param greedCount "強欲"の素の所持数
+     * @param prideMultiplier "傲慢"による効果倍率(強欲は"傲慢"によってコピーされない)
      */
-    public static void applyToMob(LivingDropsEvent event, int finalCount, int multiplier) {
-        if (finalCount <= 0) return;
-        int actualMultiplier = 1 + finalCount; // ドロップ倍率を計算 (1個なら2倍, 2個なら3倍...)
+    public static void applyToMob(LivingDropsEvent event, int greedCount, int prideMultiplier) {
+        if (greedCount <= 0) return;
+        //int finalCount = greedCount * prideMultiplier;
+        int actualMultiplier = 1 + greedCount; // ドロップ倍率を計算 (1個なら2倍, 2個なら3倍...)
 
         List<ItemEntity> originalDrops = new ArrayList<>(event.getDrops());
         event.getDrops().clear();

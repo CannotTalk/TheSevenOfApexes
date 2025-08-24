@@ -18,7 +18,6 @@ public class ModMessages {
             final PayloadRegistrar registrar = event.registrar(TheSevenOfApexes.MOD_ID)
                     .versioned("1.0");
 
-            // ★★★ 全てのエラーログから導き出された、唯一の正しい呼び出し方 ★★★
             registrar.playToServer(
                     EatBlockC2SPacket.TYPE,         // 期待値: Type<T>
                     EatBlockC2SPacket.STREAM_CODEC, // 期待値: StreamCodec

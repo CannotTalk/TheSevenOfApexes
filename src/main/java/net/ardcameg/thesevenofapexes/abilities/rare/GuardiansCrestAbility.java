@@ -27,8 +27,6 @@ public final class GuardiansCrestAbility {
         }
     }
 
-    // ★★★ onExhaustionメソッドは不要になったので、完全に削除します ★★★
-
     private static void addModifier(AttributeInstance attribute, ResourceLocation id, double amount, AttributeModifier.Operation operation) {
         attribute.addPermanentModifier(new AttributeModifier(id, amount, operation));
     }

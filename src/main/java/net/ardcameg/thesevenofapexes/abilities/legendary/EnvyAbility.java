@@ -1,6 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
-import net.minecraft.core.Holder; // ★★★ これをimport ★★★
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-import java.util.List; // ★★★ これをimport ★★★
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -19,8 +19,16 @@ import java.util.UUID;
 public final class EnvyAbility {
     private EnvyAbility() {}
 
-    public static void apply(Player player, LivingEntity target, Map<UUID, Set<UUID>> copiedEntitiesMap, int finalCount, int multiplier) {
-        if (finalCount <= 0) return;
+    /**
+     * 攻撃者の武器をプレイヤーにコピーする
+     * @param player プレイヤー
+     * @param target 攻撃者
+     * @param copiedEntitiesMap 攻撃者の情報
+     * @param envyCount "嫉妬"の所持数
+     * @param prideMultiplier "傲慢"による倍率
+     */
+    public static void apply(Player player, LivingEntity target, Map<UUID, Set<UUID>> copiedEntitiesMap, int envyCount, int prideMultiplier) {
+        if (envyCount <= 0) return;
 
         UUID playerUUID = player.getUUID();
         UUID targetUUID = target.getUUID();
@@ -42,7 +50,7 @@ public final class EnvyAbility {
                 Holder<Attribute> attributeHolder = entry.attribute();
                 // 5. その種類が「攻撃力」であるか、確認する
                 if (attributeHolder.is(Attributes.ATTACK_DAMAGE)) {
-                    // ★★★ 発見！これぞ武器なり！ ★★★
+                    // 発見！これぞ武器なり！
                     copiedSet.add(targetUUID);
 
                     if (player.getInventory().getFreeSlot() != -1) {

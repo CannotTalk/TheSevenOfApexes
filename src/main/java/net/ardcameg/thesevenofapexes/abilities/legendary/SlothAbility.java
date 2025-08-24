@@ -2,8 +2,6 @@ package net.ardcameg.thesevenofapexes.abilities.legendary;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -16,20 +14,20 @@ public final class SlothAbility {
     /**
      * "怠惰"の効果を適用する
      * @param player プレイヤー
-     * @param finalCount "怠惰"の最終的な所持数
-     * @param multiplier "怠惰"には使われない
+     * @param slothCount "怠惰"の所持数
+     * @param prideMultiplier "傲慢"の効果倍率("怠惰"は"傲慢"によってコピーされない)
      */
-    public static void apply(Player player, int finalCount, int multiplier) {
-        if (finalCount <= 0) return;
+    public static void apply(Player player, int slothCount, int prideMultiplier) {
+        if (slothCount <= 0) return;
 
         // 1. 体力と満腹度を回復
         // 基本の10%に、追加の1個あたり2.5%のボーナスを加える
-        float healthBonus = 0.025f * (finalCount - 1);
+        float healthBonus = 0.025f * (slothCount - 1);
         float totalHealthMultiplier = 0.1f + healthBonus;
         player.heal(player.getMaxHealth() * totalHealthMultiplier);
 
         // 満腹度は2個ごとに1ポイント(5%)追加ボーナス
-        int hungerBonus = (finalCount - 1) / 2;
+        int hungerBonus = (slothCount - 1) / 2;
         player.getFoodData().eat(2 + hungerBonus, 0.6f);
 
         // 2. 経験値を使ってアイテムを修復
@@ -48,7 +46,7 @@ public final class SlothAbility {
             if (!repairableItems.isEmpty()) {
                 ItemStack itemToRepair = repairableItems.get(player.getRandom().nextInt(repairableItems.size()));
 
-                int repairAmount = 2 * finalCount;
+                int repairAmount = 2 * slothCount;
                 int currentDamage = itemToRepair.getDamageValue();
                 int actualRepair = Math.min(repairAmount, currentDamage);
                 itemToRepair.setDamageValue(itemToRepair.getDamageValue() - actualRepair);

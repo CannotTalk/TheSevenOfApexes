@@ -1,23 +1,23 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
-import net.ardcameg.thesevenofapexes.TheSevenOfApexes; // ★ import
+import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
-import net.minecraft.resources.ResourceLocation; // ★ import
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance; // ★ import
-import net.minecraft.world.entity.ai.attributes.AttributeModifier; // ★ import
-import net.minecraft.world.entity.ai.attributes.Attributes; // ★ import
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 
 
 public final class PhoenixFeatherAbility {
     private PhoenixFeatherAbility() {}
 
-    // ★★★ 新しいAttributeModifierのためのIDを追加 ★★★
+    // 新しいAttributeModifierのためのIDを追加
     private static final ResourceLocation HEALTH_DEBUFF_ID =
             ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "phoenix_feather_health_debuff");
 
