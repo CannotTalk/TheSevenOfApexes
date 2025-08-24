@@ -50,7 +50,7 @@ public final class EnvyAbility {
                 Holder<Attribute> attributeHolder = entry.attribute();
                 // 5. その種類が「攻撃力」であるか、確認する
                 if (attributeHolder.is(Attributes.ATTACK_DAMAGE)) {
-                    // 発見！これぞ武器なり！
+                    // 武器を発見
                     copiedSet.add(targetUUID);
 
                     if (player.getInventory().getFreeSlot() != -1) {
