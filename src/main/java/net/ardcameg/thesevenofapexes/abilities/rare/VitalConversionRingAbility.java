@@ -10,7 +10,7 @@ public final class VitalConversionRingAbility {
     private VitalConversionRingAbility() {}
 
     /**
-     * 任務1：満腹度が満タンでなくても、体力を回復させる (変更なし)
+     * 任務1：満腹度が満タンでなくても、体力を回復させる
      */
     public static void applyHealthRecovery(Player player, int ringCount, int prideMultiplier) {
         if (player.level().getGameTime() % 20 != 0) return;

@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -27,7 +28,6 @@ public final class DeadeyeGlassAbility {
             int finalCount = glassCount * prideMultiplier;
             float newMultiplier = event.getDamageMultiplier() + (0.5f * finalCount);
             event.setDamageMultiplier(newMultiplier);
-            // setCritical(true) は不要。isVanillaCriticalがtrueの時点でクリティカルは確定している
         }
     }
 
@@ -49,8 +49,9 @@ public final class DeadeyeGlassAbility {
 
         if (glassCount > 0) {
             int finalCount = glassCount * prideMultiplier;
-            // 攻撃力: +50%
-            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * 0.50, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            float attackPowerModifier = Config.deadeyeGlassAttackPowerModifier.get().floatValue();
+            // 攻撃力:
+            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * attackPowerModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 

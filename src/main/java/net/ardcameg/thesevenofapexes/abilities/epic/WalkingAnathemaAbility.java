@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -22,8 +23,10 @@ public final class WalkingAnathemaAbility {
         int finalCount = anathemaCount * prideMultiplier;
 
         // --- 1. オーラの範囲とダメージを計算 ---
-        float radius = 4.0f + (finalCount - 1); // 1個で半径4, 1個増えるごとに+1
-        float damage = 3f * finalCount;       // 1個で2ダメージ(ハート1個), 1個増えるごとに+2
+        float baseRadius = Config.walkingAnathemaBaseRadius.get().floatValue();
+        float radius = baseRadius + (baseRadius / 2) * (finalCount - 1);
+        float basePerDamage = Config.walkingAnathemaDamagePerSecond.get().floatValue();
+        float processDamage = (basePerDamage * finalCount) / 2;
 
         // --- 2. 範囲内の敵性Mobを探す ---
         AABB searchArea = player.getBoundingBox().inflate(radius);
@@ -35,7 +38,7 @@ public final class WalkingAnathemaAbility {
         for (LivingEntity target : targets) {
             // ダメージソースを「魔法」や「間接的なもの」にすることで、
             // プレイヤーが直接攻撃したと見なされないようにする
-            target.hurt(player.damageSources().magic(), damage);
+            target.hurt(player.damageSources().magic(), processDamage);
         }
     }
 }

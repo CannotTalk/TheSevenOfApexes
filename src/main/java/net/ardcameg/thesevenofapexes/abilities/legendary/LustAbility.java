@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.sounds.SoundEvents;
@@ -28,7 +29,7 @@ public final class LustAbility {
     public static void applyPassiveEffect(Player player, int lustCount, int prideMultiplier) {
         if (lustCount <= 0) return;
 
-        int effectLevel = 12; // Lv13は内部的に12
+        int effectLevel = Config.lustEffectLevel.getAsInt() - 1; // Lv13は内部的に12
 
         // 効果時間40tick(2秒)、アンビエント(パーティクルが少ない)、パーティクル非表示
         player.addEffect(new MobEffectInstance(MobEffects.HERO_OF_THE_VILLAGE, 40, effectLevel, true, false, false));

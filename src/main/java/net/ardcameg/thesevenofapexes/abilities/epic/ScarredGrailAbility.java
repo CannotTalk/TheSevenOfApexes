@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
@@ -29,9 +30,9 @@ public final class ScarredGrailAbility {
 
         boolean hasExploded = false;
         List<ItemStack> explodedGrails = new ArrayList<>();
-
+        float explodeChance = Config.scarredGrailExplodeChance.get().floatValue();
         for (ItemStack grail : grails) {
-            if (RANDOM.nextFloat() < 0.2f) {
+            if (RANDOM.nextFloat() < explodeChance) {
                 hasExploded = true;
                 explodedGrails.add(grail);
             }

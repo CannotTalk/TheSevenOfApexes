@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -54,10 +55,13 @@ public final class VoidMantleAbility {
             player.setInvisible(true);
             hideEquipment(player);
 
-            // 2. 満腹度消費 (変更なし)
-            if (player.level().getGameTime() % 40 == 0) {
+            float consumeIntervalTicks = Config.voidMantleConsumeIntervalTicks.getAsInt();
+            float consumePoint = Config.voidMantleConsumeHungerPoint.get().floatValue();
+
+            // 2. 満腹度消費
+            if (player.level().getGameTime() % consumeIntervalTicks == 0) {
                 if (player.getFoodData().getFoodLevel() > 0) {
-                    player.getFoodData().addExhaustion(4.0f);
+                    player.getFoodData().addExhaustion(consumePoint);
                 } else {
                     unvanish(player);
                 }
@@ -91,8 +95,9 @@ public final class VoidMantleAbility {
 
         // --- 消失判定 (変更なし) ---
         List<ItemStack> mantles = BuffItemUtils.findItemsInBuffRow(player, ModItems.EPIC_VOID_MANTLE.get());
+        float vanishChance = Config.voidMantleVanishChance.get().floatValue();
         for (ItemStack mantle : mantles) {
-            if (RANDOM.nextFloat() < 0.05f) {
+            if (RANDOM.nextFloat() < vanishChance) {
                 mantle.shrink(1);
                 player.level().playSound(null, player.blockPosition(), SoundEvents.ANVIL_BREAK, SoundSource.PLAYERS, 0.5f, 2.0f);
                 BuffItemUtils.playTotemAnimation(player, ModItems.EPIC_VOID_MANTLE.get());

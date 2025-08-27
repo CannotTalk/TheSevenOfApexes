@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.uncommon;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
@@ -19,8 +20,8 @@ public final class PearlEyeAbility {
         int finalCount = eyeCount * prideMultiplier;
 
         // --- 2. ダメージを軽減する ---
-        // 1個あたり1ダメージ軽減
-        float reductionAmount = 1.0f * finalCount;
+        float damageModifier = Config.pearlEyeDamageModifier.get().floatValue();
+        float reductionAmount = damageModifier * finalCount;
         float originalDamage = event.getNewDamage();
         float newDamage = Math.max(0, originalDamage - reductionAmount);
 

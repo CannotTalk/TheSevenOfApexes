@@ -2,6 +2,7 @@
 
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -9,8 +10,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 
-public final class LifeSteelStickAbility {
-    private LifeSteelStickAbility() {}
+public final class LifeStealStickAbility {
+    private LifeStealStickAbility() {}
 
     private static final ResourceLocation HEALTH_DEBUFF_ID =
             ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "life_steel_stick_health_debuff");
@@ -25,7 +26,9 @@ public final class LifeSteelStickAbility {
     public static void applyLifeSteal(Player player, float damageDealt, int stickCount, int prideMultiplier) {
         if (stickCount <= 0 || damageDealt <= 0) return;
 
-        float stealRatio = 0.1f * stickCount * prideMultiplier;
+        int finalCount = stickCount * prideMultiplier;
+        float baseStealRatio = Config.lifeStealLifestealBaseRatio.get().floatValue();
+        float stealRatio = baseStealRatio * finalCount;
         float stealAmount = damageDealt * stealRatio;
 
         player.heal(stealAmount);
@@ -45,10 +48,11 @@ public final class LifeSteelStickAbility {
 
         // アイテムを持っている場合のみ、新しいデバフを適用する
         if (stickCount > 0) {
-            // 複数持っていても効果は重ならないように、固定で-25%を設定
+            float penalty = Config.lifeStealMaxHealthPenalty.get().floatValue();
+            // 複数持っていても効果は重ならないように、固定で設定
             AttributeModifier healthDebuff = new AttributeModifier(
                     HEALTH_DEBUFF_ID,
-                    -0.25, // -25% (ハート2.5個分)
+                    penalty,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
             healthAttribute.addPermanentModifier(healthDebuff);

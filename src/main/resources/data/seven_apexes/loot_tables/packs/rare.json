@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:empty",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "seven_apexes:rare_night_owl_eyes" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_guardians_crest" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_gills_charm" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_snipers_monocle" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_last_stand" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_blademasters_prowess" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_deadeye_glass" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_reapers_scythe" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_architects_haste" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_vital_conversion_ring" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_bounty_totem" },
+        { "type": "minecraft:item", "name": "seven_apexes:rare_hungry_banquet" }
+      ]
+    }
+  ]
+}

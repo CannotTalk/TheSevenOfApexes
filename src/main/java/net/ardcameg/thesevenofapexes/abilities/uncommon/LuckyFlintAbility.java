@@ -2,6 +2,7 @@
 
 package net.ardcameg.thesevenofapexes.abilities.uncommon;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,8 +29,8 @@ public final class LuckyFlintAbility {
         // 破壊されたブロックが砂利かどうかをチェック
         if (event.getState().is(net.minecraft.world.level.block.Blocks.GRAVEL)) {
             int finalCount = flintCount * prideMultiplier;
-            // 確率計算: 15% * (アイテム数 * 傲慢倍率)
-            float chance = 0.15f * finalCount;
+            float chanceModifier = Config.luckyFlintFlintDropAdditionalChance.get().floatValue();
+            float chance = chanceModifier * finalCount;
 
             // 確率判定
             if (player.level().random.nextFloat() < chance) {

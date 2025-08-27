@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -23,9 +24,11 @@ public final class BlademastersProwessAbility {
 
         int finalCount = prowessCount * prideMultiplier;
 
-        // 遠距離攻撃ダメージ: -20%
+        float longAttackModifier = Config.blademastersProwessLongRangeAttackModifier.get().floatValue();
+
+        // 遠距離攻撃ダメージ:
         double currentDamage = arrow.getBaseDamage();
-        double newDamage = currentDamage * (1.0 - (0.20 * finalCount));
+        double newDamage = currentDamage * (1.0 - (longAttackModifier * finalCount));
         arrow.setBaseDamage(newDamage);
     }
 
@@ -41,12 +44,15 @@ public final class BlademastersProwessAbility {
         attackDamage.removeModifier(ATTACK_DAMAGE_ID);
         attackSpeed.removeModifier(ATTACK_SPEED_ID);
 
+        float closeAttackModifier = Config.blademastersProwessCloseRangeAttackModifier.get().floatValue();
+        float attackSpeedModifier = Config.blademastersProwessAttackSpeedModifier.get().floatValue();
+
         if (prowessCount > 0) {
             int finalCount = prowessCount * prideMultiplier;
             // 近接攻撃ダメージ: +30%
-            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * 0.30, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * closeAttackModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             // 攻撃速度: +15%
-            addModifier(attackSpeed, ATTACK_SPEED_ID, finalCount * 0.15, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            addModifier(attackSpeed, ATTACK_SPEED_ID, finalCount * attackSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 

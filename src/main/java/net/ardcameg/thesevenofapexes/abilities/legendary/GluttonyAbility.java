@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -18,11 +19,10 @@ import net.minecraft.world.phys.Vec3;
 
 public class GluttonyAbility {
 
-    // --- 設定値 (Config) ---
-    // final: 定数であることを示す。static: クラスに属することを示す。
-    // この値を変更するだけで、ゲームバランスを簡単に調整できる。
-    private static final int BASE_GAUGE_THRESHOLD = 100; // レベルアップに必要な基本ゲージ量
-    private static final int GAUGE_THRESHOLD_INCREASE_PER_LEVEL = 50; // 1レベルごとに、しきい値がどれだけ増えるか
+    // レベルアップに必要な基本ゲージ量
+    private static final int BASE_GAUGE_THRESHOLD = Config.gluttonyBaseGauge.getAsInt();
+    // 1レベルごとに、しきい値がどれだけ増えるか
+    private static final int GAUGE_THRESHOLD_INCREASE_PER_LEVEL = Config.gluttonyGaugeModifier.getAsInt();
 
     // --- 内部データ用の名前 ---
     private static final String GLUTTONY_GAUGE_TAG = "GluttonyGauge";
@@ -88,15 +88,24 @@ public class GluttonyAbility {
         Vec3 traceEnd = eyePosition.add(lookVector.x * 5, lookVector.y * 5, lookVector.z * 5);
         return player.level().clip(new ClipContext(eyePosition, traceEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
-
+    // Add: Some blocks to increase the gauge for “Gluttony.”
     private static int getGaugeValueForBlock(Block block) {
-        if (block.equals(Blocks.DIRT) || block.equals(Blocks.SAND) || block.equals(Blocks.GRAVEL)) return 1;
-        if (block.equals(Blocks.STONE) || block.equals(Blocks.COBBLESTONE)) return 2;
-        if (block.equals(Blocks.OAK_LOG) || block.equals(Blocks.SPRUCE_LOG)) return 3;
-        if (block.equals(Blocks.IRON_ORE) || block.equals(Blocks.DEEPSLATE_IRON_ORE)) return 10;
-        if (block.equals(Blocks.DIAMOND_ORE) || block.equals(Blocks.DEEPSLATE_DIAMOND_ORE)) return 20;
-        if (block.equals(Blocks.REDSTONE_ORE) || block.equals(Blocks.DEEPSLATE_REDSTONE_ORE)) return 25;
-        if (block.equals(Blocks.REDSTONE_BLOCK)) return 50;
+        if (block.equals(Blocks.DIRT) || block.equals(Blocks.GRASS_BLOCK) ||block.equals(Blocks.SAND) || block.equals(Blocks.GRAVEL))
+            return 1;
+        if (block.equals(Blocks.STONE) || block.equals(Blocks.COBBLESTONE))
+            return 2;
+        if (block.equals(Blocks.OAK_LOG) || block.equals(Blocks.SPRUCE_LOG))
+            return 3;
+        if (block.equals(Blocks.IRON_ORE) || block.equals(Blocks.DEEPSLATE_IRON_ORE))
+            return 10;
+        if (block.equals(Blocks.DIAMOND_ORE) || block.equals(Blocks.DEEPSLATE_DIAMOND_ORE))
+            return 20;
+        if (block.equals(Blocks.REDSTONE_ORE) || block.equals(Blocks.DEEPSLATE_REDSTONE_ORE))
+            return 25;
+        if (block.equals(Blocks.REDSTONE_BLOCK))
+            return 50;
+        if (block.equals(Blocks.AMETHYST_BLOCK))
+            return 100;
         return 0;
     }
 
@@ -104,11 +113,13 @@ public class GluttonyAbility {
         AttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttribute == null) return;
 
+        int healthIncrease = Config.gluttonyHealthModifier.getAsInt();
+
         healthAttribute.removeModifier(GLUTTONY_HEALTH_MODIFIER_ID);
 
         AttributeModifier healthModifier = new AttributeModifier(
                 GLUTTONY_HEALTH_MODIFIER_ID,
-                level * 2.0,
+                level * healthIncrease,
                 AttributeModifier.Operation.ADD_VALUE
         );
         healthAttribute.addPermanentModifier(healthModifier);

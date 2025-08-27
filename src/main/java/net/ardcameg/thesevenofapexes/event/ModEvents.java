@@ -11,6 +11,7 @@ import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
 import net.ardcameg.thesevenofapexes.networking.packet.PhoenixDebuffSyncS2CPacket;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
+import net.ardcameg.thesevenofapexes.util.PackLootTableReloadListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -34,6 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -205,8 +207,8 @@ public class ModEvents {
         SunlightSacredSealAbility.updateEffect(player, sunSealCount, prideMultiplier, hasMoonSeal);
         MoonlightSacredSealAbility.updateEffect(player, moonSealCount, prideMultiplier, hasSunSeal, PLAYER_LAST_POSITION);
 
-        int lifeSteelCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEEL_STICK.get(), 0);
-        LifeSteelStickAbility.updatePassiveDebuff(player, lifeSteelCount);
+        int lifeSteelCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEAL_STICK.get(), 0);
+        LifeStealStickAbility.updatePassiveDebuff(player, lifeSteelCount);
 
         int berserkersDragCount = baseCounts.getOrDefault(ModItems.EPIC_BERSERKERS_DRAG.get(), 0);
         BerserkersDragAbility.updateEffect(player, berserkersDragCount, prideMultiplier);
@@ -433,11 +435,11 @@ public class ModEvents {
                 LightningFistAbility.applyAttackEffect(player, target, event.getNewDamage(), lightningFistCount, prideMultiplier);
             }
 
-            int lifeSteelStickCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEEL_STICK.get(), 0);
+            int lifeSteelStickCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEAL_STICK.get(), 0);
             if (lifeSteelStickCount > 0) {
                 // 旧: LifeSteelStickAbility.applyLifeSteal(player, target, lifeSteelStickCount, prideMultiplier);
                 // 新: eventから実際に与えたダメージを取得して渡す
-                LifeSteelStickAbility.applyLifeSteal(player, event.getNewDamage(), lifeSteelStickCount, prideMultiplier);
+                LifeStealStickAbility.applyLifeSteal(player, event.getNewDamage(), lifeSteelStickCount, prideMultiplier);
             }
 
             int shadowBindGlovesCount = baseCounts.getOrDefault(ModItems.EPIC_SHADOW_BIND_GLOVES.get(), 0);
@@ -625,6 +627,14 @@ public class ModEvents {
         if (healingLinensCount > 0) {
             HealingLinensAbility.apply(player, healingLinensCount, prideMultiplier);
         }
+    }
+
+    /**
+     * 任務19(改)：サーバーのリソースがリロードされる際に、我々のリスナーを登録する
+     */
+    @SubscribeEvent
+    public static void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(new PackLootTableReloadListener());
     }
 
 

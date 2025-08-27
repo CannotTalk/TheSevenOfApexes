@@ -11,7 +11,7 @@
 
   "item.seven_apexes.epic_lightning_fist": "Lightning Fist",
   "item.seven_apexes.epic_phoenix_feather": "Phoenix Feather",
-  "item.seven_apexes.epic_life_steel_stick": "Life Steel Stick",
+  "item.seven_apexes.epic_life_steal_stick": "Life Steal Stick",
   "item.seven_apexes.epic_berserkers_drag": "Berserker's Drag",
   "item.seven_apexes.epic_shadow_bind_gloves": "Shadow-Bind Gloves",
   "item.seven_apexes.epic_arrival_of_revival": "Arrival of Revival",
@@ -60,5 +60,6 @@
 
   "creativetab.seven_apexes.seven_apexes_item": "The Seven of Apexes",
 
-  "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s"
+  "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s",
+  "message.seven_apexes.claws_activate": "§6§lNuff Said Bub..."
 }

@@ -12,39 +12,30 @@ public class ModItems {
 
     public static final DeferredItem<Item> LEGENDARY_PRIDE = ITEMS.register("legendary_pride" ,
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_ENVY = ITEMS.register("legendary_envy",
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_WRATH = ITEMS.register("legendary_wrath" ,
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_SLOTH = ITEMS.register("legendary_sloth",
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_GREED = ITEMS.register("legendary_greed",
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_GLUTTONY = ITEMS.register("legendary_gluttony",
             () -> new GlintingItem(new Item.Properties()
-                    .rarity(Rarity.COMMON)
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_LUST = ITEMS.register("legendary_lust",
-            () -> new GlintingItem(new Item.Properties().
-                    rarity(Rarity.COMMON)
+            () -> new GlintingItem(new Item.Properties()
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_SUNLIGHT_SACRED_SEAL = ITEMS.register("legendary_sunlight_sacred_seal",
-            () -> new GlintingItem(new Item.Properties().
-                    rarity(Rarity.COMMON)
+            () -> new GlintingItem(new Item.Properties()
                     .stacksTo(1)));
     public static final DeferredItem<Item> LEGENDARY_MOONLIGHT_SACRED_SEAL = ITEMS.register("legendary_moonlight_sacred_seal",
-            () -> new GlintingItem(new Item.Properties().
-                    rarity(Rarity.COMMON)
+            () -> new GlintingItem(new Item.Properties()
                     .stacksTo(1)));
 
     public static final DeferredItem<Item> EPIC_LIGHTNING_FIST = ITEMS.register("epic_lightning_fist",
@@ -55,7 +46,7 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
-    public static final DeferredItem<Item> EPIC_LIFE_STEEL_STICK = ITEMS.register("epic_life_steel_stick",
+    public static final DeferredItem<Item> EPIC_LIFE_STEAL_STICK = ITEMS.register("epic_life_steal_stick",
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
@@ -209,7 +200,7 @@ public class ModItems {
             () -> new EpicPackItem(new Item.Properties()
                     .rarity(Rarity.EPIC)));
     public static final DeferredItem<Item> LEGENDARY_PACK = ITEMS.register("legendary_pack",
-            () -> new LegendaryPackItem(new GlintingItem.Properties()
+            () -> new LegendaryPackItem(new Item.Properties()
                     .rarity(Rarity.COMMON)));
 
 

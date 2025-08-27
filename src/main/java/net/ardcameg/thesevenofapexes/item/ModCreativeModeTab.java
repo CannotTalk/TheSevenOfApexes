@@ -30,7 +30,7 @@ public class ModCreativeModeTab {
 
                         output.accept(ModItems.EPIC_LIGHTNING_FIST);
                         output.accept(ModItems.EPIC_PHOENIX_FEATHER);
-                        output.accept(ModItems.EPIC_LIFE_STEEL_STICK);
+                        output.accept(ModItems.EPIC_LIFE_STEAL_STICK);
                         output.accept(ModItems.EPIC_BERSERKERS_DRAG);
                         output.accept(ModItems.EPIC_SHADOW_BIND_GLOVES);
                         output.accept(ModItems.EPIC_ARRIVAL_OF_REVIVAL);

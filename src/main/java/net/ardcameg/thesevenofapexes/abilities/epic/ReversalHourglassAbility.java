@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +29,9 @@ public final class ReversalHourglassAbility {
 
         // --- 1. 反射確率を計算 ---
         // 基本10%、追加1個あたり1%上昇
-        float reflectChance = 0.1f + (finalCount - 1) * 0.01f;
+        float reflectBaseChance = Config.reversalHourglassProcBaseChance.get().floatValue();
+        float reflectChance = reflectBaseChance + (finalCount - 1) * (reflectBaseChance / 2);
+        float reflectRate = Config.reversalHourglassReflectRate.get().floatValue();
 
         if (RANDOM.nextFloat() < reflectChance) {
             // --- 反射成功！ ---
@@ -40,7 +43,7 @@ public final class ReversalHourglassAbility {
         } else {
             // --- 反射失敗、カウンターダメージ ---
             // 受けたダメージの50%を計算
-            float counterDamage = damageTaken * 0.5f * finalCount;
+            float counterDamage = damageTaken * reflectRate * finalCount;
             livingAttacker.hurt(player.damageSources().magic(), counterDamage);
             // TODO: カウンターダメージのエフェクト
         }
@@ -55,11 +58,13 @@ public final class ReversalHourglassAbility {
 
         healthAttribute.removeModifier(HEALTH_DEBUFF_ID);
 
+        float penalty = Config.reversalHourglassMaxHealthPenalty.get().floatValue();
+
         if (hourglassCount > 0) {
             // -25%のデバフ。複数持っていても重ならない
             AttributeModifier healthDebuff = new AttributeModifier(
                     HEALTH_DEBUFF_ID,
-                    -0.25,
+                    penalty,
                     AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
             );
             healthAttribute.addPermanentModifier(healthDebuff);

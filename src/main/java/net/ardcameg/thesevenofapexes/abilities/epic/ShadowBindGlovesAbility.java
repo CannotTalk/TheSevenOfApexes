@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -23,16 +24,16 @@ public final class ShadowBindGlovesAbility {
         if (gloveCount <= 0) return;
 
         // --- 1. 発動確率を計算 ---
-        // 基本50%、追加1個あたり5%上昇
-        float procChance = 0.5f + (gloveCount * prideMultiplier - 1) * 0.05f;
-
+        float procBaseChance = Config.shadowBindGlovesProcBaseChance.get().floatValue();
+        int stunTicks = Config.shadowBindGlovesStunTicks.getAsInt();
+        float procChance = procBaseChance + (procBaseChance / 2) * (gloveCount * prideMultiplier - 1);
         if (RANDOM.nextFloat() < procChance) {
             // --- 2. 10%の確率で自爆するか判定 ---
             if (RANDOM.nextFloat() < procChance) {
                 if (RANDOM.nextFloat() < 0.1f) {
-                    StunAbility.apply(player, 60, stunnedEntities);
+                    StunAbility.apply(player, stunTicks, stunnedEntities);
                 } else {
-                    StunAbility.apply(target, 60, stunnedEntities);
+                    StunAbility.apply(target, stunTicks, stunnedEntities);
                 }
             }
         }

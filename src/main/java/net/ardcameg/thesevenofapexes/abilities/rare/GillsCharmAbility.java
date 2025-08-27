@@ -2,6 +2,7 @@
 
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +44,8 @@ public final class GillsCharmAbility {
         } else {
             // --- 地上でのデバフ ---
             // 1. 移動速度低下
-            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, finalCount * -0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            float movementDebuff = Config.gillsCharmDebuffMovementModifier.get().floatValue();
+            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, finalCount * movementDebuff, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
             // 2. 日光下での渇き
             // 空が見え、かつ太陽光が当たっている(光レベル15)かチェック

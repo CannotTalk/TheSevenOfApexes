@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
@@ -38,10 +39,12 @@ public final class PhoenixFeatherAbility {
         BuffItemUtils.clearAllDebuffs(player);
 
         // --- 3. デバフ効果 (AttributeModifier方式) ---
+        float healthDecreaseModifier = Config.phoenixFeatherModifier.get().floatValue();
+        int weakTicks = Config.phoenixFeatherWeakTicks.getAsInt();
         AttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttribute != null) {
             // 現在の最大体力の半分を、マイナスの値として計算
-            double healthReduction = healthAttribute.getValue() * -0.5;
+            double healthReduction = healthAttribute.getValue() * healthDecreaseModifier;
 
             AttributeModifier healthDebuff = new AttributeModifier(
                     HEALTH_DEBUFF_ID,
@@ -51,7 +54,7 @@ public final class PhoenixFeatherAbility {
             // 既存のものを削除してから追加する (安全のため)
             healthAttribute.removeModifier(HEALTH_DEBUFF_ID);
             healthAttribute.addTransientModifier(healthDebuff);
-            player.getPersistentData().putInt("PhoenixFeatherDebuffTicks", 600);
+            player.getPersistentData().putInt("PhoenixFeatherDebuffTicks", weakTicks);
             player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 60, 4, false, true,true));
             player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 4, false, true,true));
         }else {

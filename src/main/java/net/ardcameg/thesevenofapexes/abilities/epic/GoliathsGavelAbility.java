@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -32,10 +33,12 @@ public final class GoliathsGavelAbility {
         int finalCount = gavelCount * prideMultiplier;
 
         // --- 1. 範囲とダメージを計算 ---
-        float radius = 3.0f + 0.5f * (finalCount - 1);
+        float baseRadius = Config.goliathsGavelBaseRadius.get().floatValue();
+        float radius = baseRadius + (baseRadius / 2) * (finalCount - 1);
         // プレイヤーの攻撃ダメージを取得 (ただし、このアイテム自体の攻撃力ボーナスは除く)
         float baseDamage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE) / (1.0f + 0.25f * finalCount);
-        float areaDamage = baseDamage * 0.75f; // 範囲ダメージは基本攻撃力の75%
+        float damageModifier = Config.goliathsGavelDamageModifier.get().floatValue();
+        float areaDamage = baseDamage * damageModifier; // 範囲ダメージは基本攻撃力の75%
 
         // --- 2. 範囲内のターゲットを探す ---
         AABB searchArea = initialTarget.getBoundingBox().inflate(radius, 0.5, radius);
@@ -74,10 +77,14 @@ public final class GoliathsGavelAbility {
         movementSpeed.removeModifier(MOVEMENT_SPEED_ID);
 
         if (gavelCount > 0) {
+            float attackDamageBuff = Config.goliathsGavelAttackPowerModifier.get().floatValue();
+            float attackSpeedDebuff = Config.goliathsGavelAttackSpeedModifier.get().floatValue();
+            float movementSpeedDebuff = Config.goliathsGavelMovementSpeedModifier.get().floatValue();
+
             int finalEffectiveCount = gavelCount * prideMultiplier;
-            float attackDamageModifier = 0.25f + (finalEffectiveCount - 1) * 0.05f;
-            float attackSpeedModifier = -0.5f + (finalEffectiveCount - 1) * -0.05f;
-            float movementModifier = -0.15f + (finalEffectiveCount - 1) * -0.05f;
+            float attackDamageModifier = attackDamageBuff + (finalEffectiveCount - 1) * attackDamageBuff / 2;
+            float attackSpeedModifier = attackSpeedDebuff + (finalEffectiveCount - 1) * attackDamageModifier / 2;
+            float movementModifier = movementSpeedDebuff + (finalEffectiveCount - 1) * movementSpeedDebuff / 2;
 
             // 攻撃力: +25%
             addModifier(attackDamage, ATTACK_DAMAGE_ID, attackDamageModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);

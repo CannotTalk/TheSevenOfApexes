@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -41,8 +42,9 @@ public final class ArrivalOfRevivalAbility {
             level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
             // 2. 範囲ダメージのロジック
-            float radius = 5.0f + 0.25f * (finalCount - 1); // 爆発の半径
-            float damage = 15.0f; // 爆発ダメージ
+            float baseRadius = Config.arrivalOfRevivalBaseRadius.get().floatValue();
+            float radius = baseRadius + (baseRadius / 2) * (finalCount - 1); // 爆発の半径
+            float damage = Config.arrivalOfRevivalBaseDamage.get().floatValue(); // 爆発ダメージ
             AABB searchArea = player.getBoundingBox().inflate(radius);
 
             // 範囲内のLivingEntity（プレイヤー自身を除く）を全て取得
@@ -54,7 +56,8 @@ public final class ArrivalOfRevivalAbility {
             }
         }
 
-        if (RANDOM.nextFloat() < 0.05f) {
+        float clearProbability = Config.arrivalOfRevivalClearProbability.get().floatValue();
+        if (RANDOM.nextFloat() < clearProbability) {
             player.getInventory().clearContent();
             player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 1.0f, 0.5f);
         }

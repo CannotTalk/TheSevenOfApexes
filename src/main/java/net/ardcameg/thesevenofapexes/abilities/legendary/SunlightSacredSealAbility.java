@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -42,21 +43,25 @@ public final class SunlightSacredSealAbility {
 
         int actualLevel = sunSealCount * prideMultiplier;
 
+        float attackPowerModifier = Config.sunsealBuffAttackPower.get().floatValue();
+        float speedModifier = Config.sunsealBuffSpeed.get().floatValue();
+        float attackSpeedModifier = Config.sunsealBuffAttackSpeed.get().floatValue();
+
         // --- 3. 条件に応じて効果を付与または解除 ---
         if (isSunActive) {
             // --- 効果を付与 ---
-            // 攻撃力 +10%
-            addModifier(attackDamage, ATTACK_DAMAGE_ID, actualLevel * 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            // 移動速度 +25%
-            addModifier(movementSpeed, MOVEMENT_SPEED_ID, actualLevel * 0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            // 攻撃速度 +5%
-            addModifier(attackSpeed, ATTACK_SPEED_ID, actualLevel * 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 攻撃力
+            addModifier(attackDamage, ATTACK_DAMAGE_ID, actualLevel * attackPowerModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 移動速度
+            addModifier(movementSpeed, MOVEMENT_SPEED_ID, actualLevel * speedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 攻撃速度
+            addModifier(attackSpeed, ATTACK_SPEED_ID, actualLevel * attackSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
             // 回復速度 +100% (Regeneration II)
             player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 1, true, false, false));
 
-            // 周囲の植物の成長を促進 (40tickに1回)
-            if (player.level().getGameTime() % 40 == 0 && player.level() instanceof ServerLevel serverLevel) {
+            // 周囲の植物の成長を促進 (20tickに1回)
+            if (player.level().getGameTime() % 20 == 0 && player.level() instanceof ServerLevel serverLevel) {
                 promotePlantGrowth(serverLevel, player.blockPosition(), sunSealCount, prideMultiplier);
             }
 
@@ -76,10 +81,12 @@ public final class SunlightSacredSealAbility {
     }
 
     private static void promotePlantGrowth(ServerLevel level, BlockPos center, int sunSealCount, int prideMultiplier) {
-        int radius = 2 + sunSealCount;
+        int baseRadius = Config.sunsealBuffPlantsBaseRadius.getAsInt();
+        int radius = baseRadius + sunSealCount;
         // 処理を軽くするため、範囲内のブロックを全てチェックするのではなく、
         // 聖印の数に応じて、ランダムな座標を数回チェックする方式に変更
-        int attempts = sunSealCount * prideMultiplier * 2; // 1個なら2回、2個なら4回試行
+        int baseChecks = Config.sunsealBuffPlantsChecks.getAsInt();
+        int attempts = sunSealCount * prideMultiplier * baseChecks; // 1個なら2回、2個なら4回試行
 
         for (int i = 0; i < attempts; i++) {
             // 中心座標から、ランダムにずれた座標を取得

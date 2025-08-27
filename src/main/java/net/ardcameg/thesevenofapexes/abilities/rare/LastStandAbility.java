@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -28,10 +29,12 @@ public final class LastStandAbility {
         // --- 2. 条件に応じて効果を付与または解除 ---
         if (isActive) {
             int finalCount = standCount * prideMultiplier;
+            float attackSpeedModifier = Config.lastStandAttackSpeedModifier.get().floatValue();
+            float attackPowerModifier = Config.lastStandAttackPowerModifier.get().floatValue();
             // 攻撃速度: +50%
-            addModifier(attackSpeed, ATTACK_SPEED_ID, finalCount * 0.50, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            addModifier(attackSpeed, ATTACK_SPEED_ID, finalCount * attackSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             // 攻撃力: +25%
-            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * 0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalCount * attackPowerModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         } else {
             // 条件を満たしていない場合、Modifierを確実に削除する
             attackSpeed.removeModifier(ATTACK_SPEED_ID);

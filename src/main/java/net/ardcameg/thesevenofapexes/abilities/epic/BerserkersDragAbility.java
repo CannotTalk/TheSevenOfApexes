@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -29,12 +30,15 @@ public final class BerserkersDragAbility {
         attackDamage.removeModifier(ATTACK_DAMAGE_ID);
         attackSpeed.removeModifier(ATTACK_SPEED_ID);
 
+        float attackPowerBuff = Config.berserkersDragAttackPower.get().floatValue();
+        float attackSpeedBuff = Config.berserkersDragAttackSpeed.get().floatValue();
+
         if (dragCount > 0) {
             int finalEffectiveCount = dragCount * prideMultiplier;
-            // 攻撃力: +100% per count
-            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalEffectiveCount * 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            // 攻撃速度: +25% per count
-            addModifier(attackSpeed, ATTACK_SPEED_ID, finalEffectiveCount * 0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 攻撃力:
+            addModifier(attackDamage, ATTACK_DAMAGE_ID, finalEffectiveCount * attackPowerBuff, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 攻撃速度:
+            addModifier(attackSpeed, ATTACK_SPEED_ID, finalEffectiveCount * attackSpeedBuff, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 
@@ -46,8 +50,9 @@ public final class BerserkersDragAbility {
 
         int finalEffectiveCount = dragCount * prideMultiplier;
         float currentDamage = event.getNewDamage();
-        // 受けるダメージ: +100% per count
-        float newDamage = currentDamage * (1.0f + finalEffectiveCount);
+        // 受けるダメージ
+        float damageIncrease = Config.berserkersDragDamageIncrease.get().floatValue();
+        float newDamage = currentDamage * (1.0f + (damageIncrease * finalEffectiveCount));
         event.setNewDamage(newDamage);
 
         // 移動速度デバフを2秒間付与

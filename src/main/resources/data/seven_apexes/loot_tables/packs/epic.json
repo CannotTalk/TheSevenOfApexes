@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:empty",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "seven_apexes:epic_lightning_fist" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_phoenix_feather" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_life_steel_stick" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_berserkers_drag" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_shadow_bind_gloves" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_arrival_of_revival" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_walking_anathema" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_scarred_grail" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_void_mantle" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_steel_claws" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_fiends_bargain" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_reversal_hourglass" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_goliaths_gavel" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_heart_of_storm" }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -32,9 +33,12 @@ public final class ArchitectsHasteAbility {
 
         if (hasteCount > 0) {
             int finalCount = hasteCount * prideMultiplier;
-            // ブロック破壊速度: +25%
-            addModifier(breakSpeed, BLOCK_BREAK_SPEED_ID, finalCount * 0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            addModifier(interactionRange, BLOCK_INTERACTION_RANGE_ID, finalCount * 0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            float breakSpeedModifier = Config.architectsHasteBreakSpeedModifier.get().floatValue();
+            float interactRangeModifier = Config.architectsHasteInteractRangeModifier.get().floatValue();
+            // ブロック破壊速度:
+            addModifier(breakSpeed, BLOCK_BREAK_SPEED_ID, finalCount * breakSpeedModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 手が届く範囲:
+            addModifier(interactionRange, BLOCK_INTERACTION_RANGE_ID, finalCount * interactRangeModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 
@@ -49,7 +53,8 @@ public final class ArchitectsHasteAbility {
         if (tool.isDamageableItem()) {
             int finalCount = hasteCount * prideMultiplier;
             // 25%の確率で、追加で1ダメージを与える
-            float penaltyChance = 0.25f * finalCount;
+            float pennaltyModifier = Config.architectsHasteInteractRangeModifier.get().floatValue();
+            float penaltyChance = pennaltyModifier * finalCount;
 
             // 確率を整数回と小数部に分ける
             int guaranteedDamage = (int) penaltyChance;

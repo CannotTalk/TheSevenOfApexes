@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,29 +26,50 @@ public final class MoonlightSacredSealAbility {
 
 
     public static void updateEffect(Player player, int moonSealCount, int prideMultiplier, boolean hasSunSeal, Map<UUID, Vec3> playerLastPos) {
+        if (moonSealCount <= 0) {
+            // アイテムを持っていない場合は、念のため周囲のMobのスロー効果を解除する
+            if (player.level().getGameTime() % 20 == 0) {
+                slowDownNearbyEntities(player, 0, 1, false);
+            }
+            return;
+        }
+
         int actualLevel = moonSealCount * prideMultiplier;
 
-        // --- 属性(Attribute)を取得 ---
         AttributeInstance movementSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (movementSpeed == null) return;
 
-        // --- 1. 条件を判定 ---
+        // --- 1. 条件を判定 (ロジック修正) ---
         boolean isNight = player.level().isNight();
-        int lightLevel = player.level().getLightEmission(player.blockPosition());
-        boolean isDark = isNight || lightLevel <= 7;
-        boolean isBuffActive = moonSealCount > 0 && (hasSunSeal || isDark);
-        boolean isDebuffActive = moonSealCount > 0 && !hasSunSeal && !isDark;
+
+        // 「空の明るさ」と「ブロックの明るさ」を取得し、より明るい方を採用する
+        int skyLight = player.level().getBrightness(LightLayer.SKY, player.blockPosition());
+        int blockLight = player.level().getBrightness(LightLayer.BLOCK, player.blockPosition());
+        int finalLightLevel = Math.max(skyLight, blockLight);
+
+        // 空が見えるかどうかも判定材料に加える
+        boolean canSeeSky = player.level().canSeeSky(player.blockPosition());
+
+        // 暗いかどうかの判定：夜、または（空が見えず、明るさが7以下）の場合
+        boolean isDark = isNight || (!canSeeSky && finalLightLevel <= 7);
+
+        boolean isBuffActive = hasSunSeal || isDark;
+        boolean isDebuffActive = !hasSunSeal && !isDark;
 
         // --- 2. プレイヤー自身のデバフ効果 ---
+        movementSpeed.removeModifier(MOVEMENT_SPEED_DEBUFF_ID);
         if (isDebuffActive) {
-            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, -0.25 + ((actualLevel - 1) * -0.01), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        } else {
-            movementSpeed.removeModifier(MOVEMENT_SPEED_DEBUFF_ID);
+            float speedBaseMultiplier = Config.moonsealDebuffSpeedBaseMultiplier.get().floatValue();
+            float speedMultiplierModifier = Config.moonsealDebuffSpeedMultiplierModifier.get().floatValue();
+            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID,
+                    speedBaseMultiplier + ((actualLevel - 1) * speedMultiplierModifier),
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
 
         // --- 3. プレイヤー自身のバフ効果 ---
+        // 以前のコードでは耐性効果が永続しなかったため、効果時間を延長(20秒=400tick)
         if (isBuffActive) {
-            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 1, true, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 400, 1, true, false, false));
         }
 
         // --- 4. 周囲のMobへのデバフ効果 ---
@@ -54,7 +77,6 @@ public final class MoonlightSacredSealAbility {
         Vec3 lastPos = playerLastPos.get(player.getUUID());
         boolean isStandingStill = lastPos != null && currentPos.distanceToSqr(lastPos) < 0.0001;
 
-        // 1秒に1回だけ処理
         if (player.level().getGameTime() % 20 == 0) {
             slowDownNearbyEntities(player, moonSealCount, prideMultiplier, isBuffActive && isStandingStill);
         }
@@ -74,13 +96,15 @@ public final class MoonlightSacredSealAbility {
             AttributeInstance movementSpeed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
             if (movementSpeed == null) continue;
 
+            movementSpeed.removeModifier(NEARBY_MOB_SLOW_ID);
+
             if (isActive) {
                 int actualLevel = moonSealCount * prideMultiplier;
-                double slowAmount = -0.5 + ((actualLevel - 1) * -0.05); // -50%を基本に、追加で-5%ずつ
+                float slowdownBase = Config.moonsealBuffBaseSlowdown.get().floatValue();
+                float slowdownModifier = Config.moonsealBuffSlowdownModifier.get().floatValue();
+                double slowAmount = slowdownBase + ((actualLevel - 1) * slowdownModifier);
                 AttributeModifier debuff = new AttributeModifier(NEARBY_MOB_SLOW_ID, slowAmount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
                 movementSpeed.addTransientModifier(debuff);
-            } else {
-                movementSpeed.removeModifier(NEARBY_MOB_SLOW_ID);
             }
         }
     }

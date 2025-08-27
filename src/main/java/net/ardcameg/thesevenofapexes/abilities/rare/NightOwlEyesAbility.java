@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -39,10 +40,14 @@ public final class NightOwlEyesAbility {
         } else {
             // --- 昼のデバフ ---
             int finalCount = eyeCount * prideMultiplier;
-            // 攻撃力: -25%
-            addModifier(attackDamage, ATTACK_DAMAGE_DEBUFF_ID, finalCount * -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            // 移動速度: -10%
-            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, finalCount * -0.10, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+
+            float attackDebuff = Config.nightOwlEyesAttackPowerModifier.get().floatValue();
+            float movementDebuff = Config.nightOwlEyesMovementSpeedModifier.get().floatValue();
+
+            // 攻撃力:
+            addModifier(attackDamage, ATTACK_DAMAGE_DEBUFF_ID, finalCount * attackDebuff, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            // 移動速度:
+            addModifier(movementSpeed, MOVEMENT_SPEED_DEBUFF_ID, finalCount * movementDebuff, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 

@@ -2,6 +2,7 @@
 
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -31,8 +32,10 @@ public final class HeartOfStormAbility {
 
         // --- 確率計算 ---
         int finalCount = stormCount * prideMultiplier;
-        // 発動確率: 1 - (1 - 0.3)^finalCount (複数所持で確率が上昇する)
-        double triggerChance = 1.0 - Math.pow(0.7, finalCount);
+        float heartOfStormDamageProbability = Config.heartOfStormProbability.get().floatValue();
+        float chanceModifier = Config.heartOfStormProcChanceModifier.get().floatValue();
+        int stunTicks = Config.heartOfStormStunTicks.getAsInt();
+        double triggerChance = 1.0 - Math.pow((1 - chanceModifier), finalCount);
 
         if (serverLevel.random.nextDouble() < triggerChance) {
             // --- 1. 攻撃者に雷を落とし、ダメージを与える ---
@@ -43,12 +46,11 @@ public final class HeartOfStormAbility {
             serverLevel.addFreshEntity(lightning);
 
             // 最大体力の25%のダメージを正確に与える
-            float damageAmount = livingAttacker.getMaxHealth() * 0.25f;
+            float damageAmount = livingAttacker.getMaxHealth() * heartOfStormDamageProbability;
             livingAttacker.hurt(player.damageSources().lightningBolt(), damageAmount);
 
             // --- 2. プレイヤーを2秒間スタンさせる ---
-            // 2秒 = 40 ticks
-            StunAbility.apply(player, 40, stunnedEntities);
+            StunAbility.apply(player, stunTicks, stunnedEntities);
         }
     }
 }

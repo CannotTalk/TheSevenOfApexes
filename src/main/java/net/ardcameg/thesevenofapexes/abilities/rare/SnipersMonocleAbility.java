@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.rare;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -24,11 +25,14 @@ public final class SnipersMonocleAbility {
         int finalCount = monocleCount * prideMultiplier;
 
         // --- 矢の弾速(Velocity)を増加させる ---
-        float velocityMultiplier = 1.0f + 0.3f + (0.15f * (finalCount - 1));
+        float velocityModifier = Config.snipersMonocleVelocityModifier.get().floatValue();
+        float damageModifier = Config.snipersMonocleDamageModifier.get().floatValue();
+
+        float velocityMultiplier = 1.0f + velocityModifier + ((velocityModifier / 2) * (finalCount - 1));
         arrow.setDeltaMovement(arrow.getDeltaMovement().scale(velocityMultiplier));
 
         // --- 矢の基礎ダメージ(Base Damage)を増加させる ---
-        double damageBonus = 0.15 + (0.05 * (finalCount - 1));
+        double damageBonus = damageModifier + ((damageModifier / 2) * (finalCount - 1));
         arrow.setBaseDamage(arrow.getBaseDamage() * (1.0 + damageBonus));
     }
 
@@ -44,7 +48,8 @@ public final class SnipersMonocleAbility {
         if (monocleCount > 0) {
             int finalCount = monocleCount * prideMultiplier;
             // 近接攻撃ダメージ: -20%
-            addModifier(attackDamage, MELEE_DAMAGE_DEBUFF_ID, finalCount * -0.20, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            float damageModifier = -(Config.snipersMonocleMeleeDamageModifier.get().floatValue());
+            addModifier(attackDamage, MELEE_DAMAGE_DEBUFF_ID, finalCount * damageModifier, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         }
     }
 

@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +24,8 @@ public final class GreedAbility {
     public static void applyToMob(LivingDropsEvent event, int greedCount, int prideMultiplier) {
         if (greedCount <= 0) return;
         //int finalCount = greedCount * prideMultiplier;
-        int actualMultiplier = 1 + greedCount; // ドロップ倍率を計算 (1個なら2倍, 2個なら3倍...)
+        int baseDropRate = Config.greedBaseDropRate.getAsInt();
+        int actualMultiplier = 1 + (greedCount * baseDropRate); // ドロップ倍率を計算 (1個なら2倍, 2個なら3倍...)
 
         List<ItemEntity> originalDrops = new ArrayList<>(event.getDrops());
         event.getDrops().clear();

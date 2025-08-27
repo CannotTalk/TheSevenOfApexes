@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.uncommon;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,10 +19,10 @@ public final class HealingLinensAbility {
         // 所持数が0以下なら何もしない
         if (linensCount <= 0) return;
 
-        // 体力がハート5個 (10.0f) "未満" かチェック (10.0fちょうどは対象外)
-        if (player.getHealth() < 10.0f) {
-            // 体力をハート5個 (10.0f) に設定する
-            player.setHealth(10.0f);
+        float healingHealthLine = Config.healingLinensRegenerateHealth.get().floatValue();
+        if (player.getHealth() < healingHealthLine) {
+            float regenerateHealth = Math.min(healingHealthLine, player.getMaxHealth());
+            player.setHealth(regenerateHealth);
 
             // 効果が発動したことをプレイヤーにフィードバックする
             if (player instanceof ServerPlayer serverPlayer) {

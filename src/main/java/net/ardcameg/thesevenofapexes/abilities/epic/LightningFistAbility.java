@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -38,7 +39,10 @@ public final class LightningFistAbility {
         float currentDamage = initialDamage;
 
         int finalCount = fistCount * prideMultiplier;
-        float chainProbability = 0.25f + 0.02f * (Math.max(0, finalCount - 1));
+        float chainBaseProbability = Config.lightningFistChainBaseProbability.get().floatValue();
+        float chainAttackDecay = Config.lightningFistChainAttackDecay.get().floatValue();
+
+        float chainProbability = chainBaseProbability + (chainBaseProbability / 2) * (Math.max(0, finalCount - 1));
 
         while (true) {
             final LivingEntity finalCurrentTarget = currentTarget;
@@ -56,7 +60,7 @@ public final class LightningFistAbility {
             LivingEntity nextTarget = candidates.get(random.nextInt(candidates.size()));
             BuffItemUtils.drawParticleLine(level, currentTarget, nextTarget, REDSTONE_PARTICLE);
 
-            //currentDamage *= 0.2f;
+            currentDamage *= (1 - chainAttackDecay);
 
             if(currentDamage < 0.01f){
                 break;

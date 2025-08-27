@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.uncommon;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -22,8 +23,8 @@ public final class FertileClodAbility {
         int finalCount = clodCount * prideMultiplier;
 
         // --- 1. 発動確率を計算 ---
-        // 基本10%、追加1個あたり2.5%上昇
-        float procChance = 0.10f + (finalCount - 1) * 0.025f;
+        float chanceModifier = Config.fertileClodExtraBornmealChance.get().floatValue();
+        float procChance = chanceModifier + (finalCount - 1) * (chanceModifier / 2);
 
         if (RANDOM.nextFloat() < procChance) {
             // --- 2. 追加の成長を試みる ---

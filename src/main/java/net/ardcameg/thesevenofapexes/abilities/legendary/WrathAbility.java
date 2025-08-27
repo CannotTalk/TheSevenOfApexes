@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,9 +31,11 @@ public final class WrathAbility {
             serverLevel.addFreshEntity(visualLightning);
         }
 
+        float probabilityModifier = Config.wrathProbabilityModifier.get().floatValue();
+
         if (attacker instanceof LivingEntity livingAttacker) {
             // 最終的な発動回数でダメージ割合を計算
-            float totalDamageMultiplier = 1.0f - (float)Math.pow(0.5, finalCount);
+            float totalDamageMultiplier = 1.0f - (float)Math.pow(probabilityModifier, finalCount);
             // さらに、傲慢による効果倍率を掛け合わせる
             float damageAmount = livingAttacker.getMaxHealth() * totalDamageMultiplier * multiplier;
             livingAttacker.hurt(player.damageSources().lightningBolt(), damageAmount);

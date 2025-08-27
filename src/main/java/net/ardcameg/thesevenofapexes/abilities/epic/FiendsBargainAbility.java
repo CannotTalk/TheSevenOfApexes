@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 public final class FiendsBargainAbility {
     private FiendsBargainAbility() {}
 
-    private static final int XP_COST_PER_ITEM = 5; // 1個あたりの経験値レベルコスト
+    private static final int XP_COST_PER_ITEM = Config.fiendsBargainXpCost.getAsInt(); // 1個あたりの経験値レベルコスト
 
     /**
      * "悪魔との契約書"の効果を適用する

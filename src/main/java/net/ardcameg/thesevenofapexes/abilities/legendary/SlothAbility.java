@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.legendary;
 
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -20,15 +21,19 @@ public final class SlothAbility {
     public static void apply(Player player, int slothCount, int prideMultiplier) {
         if (slothCount <= 0) return;
 
+        int finalCount = slothCount *  prideMultiplier;
+
         // 1. 体力と満腹度を回復
-        // 基本の10%に、追加の1個あたり2.5%のボーナスを加える
-        float healthBonus = 0.025f * (slothCount - 1);
-        float totalHealthMultiplier = 0.1f + healthBonus;
+        // 基本に、追加の1個あたりのボーナスを加える
+        float healthBase = Config.slothHealthRegenerateBase.get().floatValue();
+        float totalHealthMultiplier = healthBase + (healthBase / 2) * (finalCount - 1);
         player.heal(player.getMaxHealth() * totalHealthMultiplier);
 
-        // 満腹度は2個ごとに1ポイント(5%)追加ボーナス
-        int hungerBonus = (slothCount - 1) / 2;
-        player.getFoodData().eat(2 + hungerBonus, 0.6f);
+        // 満腹度は2個ごとに1ポイント(5%)追加ボーナス(固定)
+        int hungerBase = 2;
+        int hungerBonus = 1;
+        player.getFoodData().eat(hungerBase + hungerBonus * (finalCount - 1),
+                (int)(hungerBonus * (finalCount - 1 ) / 2));
 
         // 2. 経験値を使ってアイテムを修復
         if (player.experienceLevel > 0) {
@@ -46,7 +51,9 @@ public final class SlothAbility {
             if (!repairableItems.isEmpty()) {
                 ItemStack itemToRepair = repairableItems.get(player.getRandom().nextInt(repairableItems.size()));
 
-                int repairAmount = 2 * slothCount;
+                int repairBase = Config.slothMendingBasePoint.getAsInt();
+
+                int repairAmount = repairBase * finalCount;
                 int currentDamage = itemToRepair.getDamageValue();
                 int actualRepair = Math.min(repairAmount, currentDamage);
                 itemToRepair.setDamageValue(itemToRepair.getDamageValue() - actualRepair);
@@ -64,13 +71,14 @@ public final class SlothAbility {
      * @return 必要な静止時間 (tick)
      */
     public static int getRequiredStandingTicks(int count) {
+        // 1個増えるごとに短縮される。
+        int baseTicks = Config.slothActivateBaseTicks.getAsInt();
+        int reductionPerItem = Config.slothActivateTicksModifier.getAsInt();
+        int minTicks = 20;
+
         if (count <= 0) {
-            return 300; // 0個ならデフォルトの15秒
+            return baseTicks; // 0個ならデフォルト
         }
-        // 1個で15秒、1個増えるごとに2.5秒 (50 ticks) 短縮される。ただし最低でも2秒(40ticks)は必要。
-        int baseTicks = 300;
-        int reductionPerItem = 50;
-        int minTicks = 40;
 
         int requiredTicks = baseTicks - (reductionPerItem * (count - 1));
 

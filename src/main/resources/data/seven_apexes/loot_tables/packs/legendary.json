@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:empty",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_pride" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_envy" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_wrath" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_sloth" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_greed" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_gluttony" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_lust" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_sunlight_sacred_seal" },
+        { "type": "minecraft:item", "name": "seven_apexes:legendary_moonlight_sacred_seal" }
+      ]
+    }
+  ]
+}

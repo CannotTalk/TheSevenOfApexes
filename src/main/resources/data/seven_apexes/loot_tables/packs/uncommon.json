@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:empty",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_pearl_eye" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_scent_of_compost" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_fertile_clod" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_lucky_flint" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_redundant_flint" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_healing_linens" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_spiders_warp" },
+        { "type": "minecraft:item", "name": "seven_apexes:uncommon_secret_art_of_sewing" }
+      ]
+    }
+  ]
+}
