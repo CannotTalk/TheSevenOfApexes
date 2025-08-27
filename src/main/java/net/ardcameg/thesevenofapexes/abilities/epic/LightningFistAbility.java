@@ -11,9 +11,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random; // <-- java.util.Random を使うのは変わらない
+import java.util.Random;
 
 public final class LightningFistAbility {
     private LightningFistAbility() {}

@@ -16,8 +16,6 @@ public final class PackLootManager {
     private PackLootManager() {}
     private static final Random RANDOM = new Random();
 
-    // --- 手動のアイテムリストは全て不要になったので削除 ---
-
     /**
      * ランダムパックを開封する
      */
