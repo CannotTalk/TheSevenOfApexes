@@ -42,6 +42,7 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.EPIC_REVERSAL_HOURGLASS);
                         output.accept(ModItems.EPIC_GOLIATHS_GAVEL);
                         output.accept(ModItems.EPIC_HEART_OF_STORM);
+                        output.accept(ModItems.EPIC_FERRYMANS_BARGE);
 
                         output.accept(ModItems.RARE_NIGHT_OWL_EYES);
                         output.accept(ModItems.RARE_GUARDIANS_CREST);

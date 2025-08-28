@@ -94,6 +94,10 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> EPIC_FERRYMANS_BARGE = ITEMS.register("epic_ferrymans_barge",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.EPIC)
+                    .stacksTo(1)));
 
     public static final DeferredItem<Item> RARE_NIGHT_OWL_EYES = ITEMS.register("rare_night_owl_eyes",
             () -> new Item(new Item.Properties()

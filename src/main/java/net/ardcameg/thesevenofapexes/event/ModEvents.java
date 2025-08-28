@@ -146,12 +146,24 @@ public class ModEvents {
             }
         }
 
-        if (target instanceof Player player) {
-            if (player.level().isClientSide) return;
+        if (target instanceof ServerPlayer player) {
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if (baseCounts.isEmpty()) return;
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+            // 渡し船の致死ダメージ肩代わり処理
+            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
+            if (bargeCount > 0) {
+                // このダメージで死ぬかどうかを判定
+                if (player.getHealth() - event.getNewDamage() <= 0) {
+                    // ダメージをキャンセル
+                    event.setNewDamage(0f);
+                    // 渡し船を発動
+                    FerrymansBargeAbility.startFerry(player, bargeCount, prideMultiplier);
+                    return; // 渡し船が発動したので、以降のダメージ処理は全てスキップ
+                }
+            }
 
             int pearlEyeCount = baseCounts.getOrDefault(ModItems.UNCOMMON_PEARL_EYE, 0);
             if (pearlEyeCount > 0) {
@@ -183,13 +195,25 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide) return;
-
-        handlePhoenixFeatherDebuff(player);
+        if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) return;
 
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+        // 渡し船タイマーの処理
+        if (serverPlayer.getPersistentData().contains(FerrymansBargeAbility.BARGE_TICKS_TAG)) {
+            int ticksLeft = serverPlayer.getPersistentData().getInt(FerrymansBargeAbility.BARGE_TICKS_TAG);
+            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
+            if (ticksLeft > 0) {
+                serverPlayer.getPersistentData().putInt(FerrymansBargeAbility.BARGE_TICKS_TAG, ticksLeft - 1);
+            } else {
+                FerrymansBargeAbility.endFerry(serverPlayer, bargeCount, prideMultiplier);
+            }
+            return; // スペクテイター中は他のTick処理を全てスキップ
+        }
+
+        handlePhoenixFeatherDebuff(player);
 
         int slothCount = baseCounts.getOrDefault(ModItems.LEGENDARY_SLOTH.get(), 0);
         if (slothCount > 0) {
@@ -377,7 +401,7 @@ public class ModEvents {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onPlayerDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) return;
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
 
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         if(baseCounts.isEmpty()) return;

@@ -229,6 +229,10 @@ public class Config {
                 .comment("Multiplier for movement speed modifier by Goliath's Gavel.")
                 .defineInRange("goliathsGavelAttackPowerModifier", -0.15, -100.0, 0);
 
+        ferrymanBargeBaseRegenerate = BUILDER
+                .comment("Base Health restored by the Ferryman Barge")
+                .defineInRange("ferrymanBargeBaseRegenerate", 2.0, 0.0, 100.0);
+
         BUILDER.pop(); // カテゴリ分けを終了
     }
 
@@ -267,6 +271,7 @@ public class Config {
     public static final ModConfigSpec.DoubleValue goliathsGavelAttackPowerModifier;
     public static final ModConfigSpec.DoubleValue goliathsGavelAttackSpeedModifier;
     public static final ModConfigSpec.DoubleValue goliathsGavelMovementSpeedModifier;
+    public static final ModConfigSpec.DoubleValue ferrymanBargeBaseRegenerate;
 
     static {
         BUILDER.push("Rare Rarity Ability");
