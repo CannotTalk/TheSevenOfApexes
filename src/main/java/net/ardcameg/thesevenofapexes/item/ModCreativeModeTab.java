@@ -68,6 +68,10 @@ public class ModCreativeModeTab {
 
                         output.accept(ModItems.COMMON_SHINING_AURA);
                         output.accept(ModItems.COMMON_EMPERORS_NEW_CLOTHES);
+                        output.accept(ModItems.COMMON_RAINBOW_SHARD);
+                        output.accept(ModItems.COMMON_UNLUCKY_RABBIT);
+                        output.accept(ModItems.COMMON_HOLLOW_SHELL);
+                        output.accept(ModItems.COMMON_OLD_ANGLERS_DIARY);
 
 
                         output.accept(ModItems.RANDOM_PACK);

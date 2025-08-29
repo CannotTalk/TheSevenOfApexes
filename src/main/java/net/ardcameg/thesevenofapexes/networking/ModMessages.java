@@ -1,9 +1,7 @@
 package net.ardcameg.thesevenofapexes.networking;
 
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
-import net.ardcameg.thesevenofapexes.networking.packet.EatBlockC2SPacket;
-import net.ardcameg.thesevenofapexes.networking.packet.PhoenixDebuffSyncS2CPacket;
-import net.ardcameg.thesevenofapexes.networking.packet.PlayTotemAnimationS2CPacket;
+import net.ardcameg.thesevenofapexes.networking.packet.*;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -37,6 +35,12 @@ public class ModMessages {
                     PlayTotemAnimationS2CPacket.TYPE,
                     PlayTotemAnimationS2CPacket.STREAM_CODEC,
                     PlayTotemAnimationS2CPacket::handle
+            );
+
+            registrar.playToClient(
+                    BargeTimerSyncS2CPacket.TYPE,
+                    BargeTimerSyncS2CPacket.STREAM_CODEC,
+                    BargeTimerSyncS2CPacket::handle
             );
         });
     }

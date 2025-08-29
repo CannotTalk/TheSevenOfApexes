@@ -5,7 +5,10 @@
       "rolls": 1,
       "entries": [
         { "type": "minecraft:item", "name": "seven_apexes:common_shining_aura" },
-        { "type": "minecraft:item", "name": "seven_apexes:common_emperors_new_clothes" }
+        { "type": "minecraft:item", "name": "seven_apexes:common_emperors_new_clothes" },
+        { "type": "minecraft:item", "name": "seven_apexes:common_rainbow_shard"},
+        { "type": "minecraft:item", "name": "seven_apexes:common_unlucky_rabbit"},
+        { "type": "minecraft:item", "name": "seven_apexes:common_old_anglers_diary"}
       ]
     }
   ]

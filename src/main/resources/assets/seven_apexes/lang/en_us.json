@@ -49,6 +49,10 @@
 
   "item.seven_apexes.common_shining_aura": "Shining Aura",
   "item.seven_apexes.common_emperors_new_clothes": "Emperor's New Clothes",
+  "item.seven_apexes.common_rainbow_shard": "Rainbow Shard",
+  "item.seven_apexes.common_unlucky_rabbit": "Unlucky Rabbit",
+  "item.seven_apexes.common_hollow_shell": "Hollow Shell",
+  "item.seven_apexes.common_old_anglers_diary": "Old Angler's Diary",
 
 
   "item.seven_apexes.random_pack": "Random Pack",
@@ -62,5 +66,27 @@
   "creativetab.seven_apexes.seven_apexes_item": "The Seven of Apexes",
 
   "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s",
-  "message.seven_apexes.claws_activate": "§6§lNuff Said Bub..."
+  "message.seven_apexes.claws_activate": "§6§lNuff Said Bub...",
+  "message.seven_apexes.barge_timer": "Returning to the mortal realm in... %s",
+
+  "message.seven_apexes.diary.1": "§7§oThe fish seem lively today...§r",
+  "message.seven_apexes.diary.2": "§7§oPatience is the angler's greatest virtue.§r",
+  "message.seven_apexes.diary.3": "§7§oI wonder what treasures lie beneath these waters...§r",
+  "message.seven_apexes.diary.4": "§7§oThe gentle lapping of the waves is soothing.§r",
+  "message.seven_apexes.diary.5": "§7§oJust one more cast...§r",
+  "message.seven_apexes.diary.6": "§7§oThe wind tells a different story today...§r",
+  "message.seven_apexes.diary.7": "§7§oA calm surface often hides a turbulent world below.§r",
+  "message.seven_apexes.diary.8": "§7§oThey say the rain awakens the ancient ones...§r",
+  "message.seven_apexes.diary.9": "§7§oDusk. The water holds its breath.§r",
+  "message.seven_apexes.diary.10": "§7§oThis old rod... it knows the way.§r",
+  "message.seven_apexes.diary.11": "§7§oIt's not the fish you catch, but the stories you tell.§r",
+  "message.seven_apexes.diary.12": "§7§oThe line is a thread to another world.§r",
+  "message.seven_apexes.diary.13": "§7§oHeard a splash. A big one. Or maybe just a dream.§r",
+  "message.seven_apexes.diary.14": "§7§oSometimes, the greatest catch is the silence.§r",
+  "message.seven_apexes.diary.15": "§7§oThe one that got away... I still think about it.§r",
+  "message.seven_apexes.diary.16": "§7§oYou don't choose the spot. The spot chooses you.§r",
+  "message.seven_apexes.diary.17": "§7§oThe water keeps its secrets well.§r",
+  "message.seven_apexes.diary.18": "§7§oJust me, the sky, and the hope on the end of a line.§r",
+  "message.seven_apexes.diary.19": "§7§oIs it hunger that brings them to the hook, or curiosity?§r",
+  "message.seven_apexes.diary.20": "§7§oEvery cast is a new beginning.§r"
 }

@@ -19,8 +19,6 @@ public final class FerrymansBargeAbility {
     private static final String BARGE_GAMEMODE_TAG = "FerrymansBargeOriginalGameMode";
 
     public static boolean startFerry(ServerPlayer player, int bargeCount, int prideMultiplier) {
-        // 1: ここではアイテムを消費しない
-
         int originalGameModeId = player.gameMode.getGameModeForPlayer().getId();
         player.getPersistentData().putInt(BARGE_GAMEMODE_TAG, originalGameModeId);
 
@@ -41,7 +39,14 @@ public final class FerrymansBargeAbility {
         });
 
         player.setGameMode(GameType.SPECTATOR);
-        player.getPersistentData().putInt(BARGE_TICKS_TAG, 100);
+
+        // この時点での bargeCount を使って計算する
+        int finalBargeCount = bargeCount * prideMultiplier;
+        int baseTicks = Config.ferrymanBargeSpectatorBaseTicks.getAsInt();
+        // 1個目は5秒、2個目から+1秒
+        int bonusSeconds = finalBargeCount - 1;
+        int totalTicks = baseTicks + bonusSeconds * 20;
+        player.getPersistentData().putInt(BARGE_TICKS_TAG, totalTicks);
 
         player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_DEATH, SoundSource.PLAYERS, 1.0f, 0.5f);
         player.level().playSound(null, player.blockPosition(), SoundEvents.CONDUIT_DEACTIVATE, SoundSource.PLAYERS, 1.0f, 1.0f);
@@ -54,13 +59,14 @@ public final class FerrymansBargeAbility {
         GameType originalGameType = GameType.byId(originalGameModeId);
         player.setGameMode(originalGameType);
 
-        // この時点では、まだアイテムは消費されていない
+        // 1. まず、HP回復量を計算する (この時点ではアイテムは消費されていない)
         int finalBargeCount = bargeCount * prideMultiplier;
         float baseRegenerate = Config.ferrymanBargeBaseRegenerate.get().floatValue();
-        float healthToRestore = baseRegenerate + (finalBargeCount -1); // 1個目は基礎値2、2個目から+1
+        // 1個目は基礎値(2)、2個目から+1
+        float healthToRestore = baseRegenerate + (finalBargeCount - 1);
         player.setHealth(healthToRestore);
 
-        // 3: HP回復の恩恵を受けた後に、アイテムを1つ消費
+        // 2. HP回復の恩恵を受けた後に、アイテムを1つ消費する
         BuffItemUtils.consumeItemFromBuffRow(player, ModItems.EPIC_FERRYMANS_BARGE.get());
 
         player.getFoodData().setFoodLevel(20);

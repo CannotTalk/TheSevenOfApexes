@@ -9,7 +9,7 @@ import net.ardcameg.thesevenofapexes.abilities.common.*;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
-import net.ardcameg.thesevenofapexes.networking.packet.PhoenixDebuffSyncS2CPacket;
+import net.ardcameg.thesevenofapexes.networking.packet.*;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.ardcameg.thesevenofapexes.util.PackLootTableReloadListener;
 import net.minecraft.core.BlockPos;
@@ -62,6 +62,7 @@ public class ModEvents {
     private static final Set<LivingEntity> STUNNED_ENTITIES = new HashSet<>();
     private static final Set<UUID> GRAIL_DAMAGE_FLAG = new HashSet<>();
     private static final Set<UUID> CRITICAL_HIT_FLAG = new HashSet<>();
+    private static final String HEAL_ON_WAKE_UP_TAG = "HealOnWakeUp";
 
     /**
      * 任務1：プレイヤーがダメージを受けた"後"の処理
@@ -201,16 +202,8 @@ public class ModEvents {
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-        // 渡し船タイマーの処理
-        if (serverPlayer.getPersistentData().contains(FerrymansBargeAbility.BARGE_TICKS_TAG)) {
-            int ticksLeft = serverPlayer.getPersistentData().getInt(FerrymansBargeAbility.BARGE_TICKS_TAG);
-            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
-            if (ticksLeft > 0) {
-                serverPlayer.getPersistentData().putInt(FerrymansBargeAbility.BARGE_TICKS_TAG, ticksLeft - 1);
-            } else {
-                FerrymansBargeAbility.endFerry(serverPlayer, bargeCount, prideMultiplier);
-            }
-            return; // スペクテイター中は他のTick処理を全てスキップ
+        if (handleFerrymansBargeTimer(serverPlayer)) {
+            return;
         }
 
         handlePhoenixFeatherDebuff(player);
@@ -291,12 +284,24 @@ public class ModEvents {
         }
 
         int shiningAuraCount = baseCounts.getOrDefault(ModItems.COMMON_SHINING_AURA.get(), 0);
-        // このアイテムは効果を更新する必要があるので、if文ではなく直接呼び出す
         ShiningAuraAbility.updateEffect(player, shiningAuraCount, prideMultiplier);
 
         int clothesCount = baseCounts.getOrDefault(ModItems.COMMON_EMPERORS_NEW_CLOTHES.get(), 0);
         if (clothesCount > 0) {
             EmperorsNewClothesAbility.apply(player, clothesCount, prideMultiplier);
+        }
+
+        int rainbowShardCount = baseCounts.getOrDefault(ModItems.COMMON_RAINBOW_SHARD.get(), 0);
+        if (rainbowShardCount > 0) {
+            RainbowShardAbility.apply(player, rainbowShardCount, prideMultiplier);
+        }
+
+        int unluckyRabbitCount = baseCounts.getOrDefault(ModItems.COMMON_UNLUCKY_RABBIT.get(), 0);
+        UnluckyRabbitAbility.updateEffect(player, unluckyRabbitCount, prideMultiplier);
+
+        int diaryCount = baseCounts.getOrDefault(ModItems.COMMON_OLD_ANGLERS_DIARY.get(), 0);
+        if (diaryCount > 0) {
+            OldAnglersDiaryAbility.apply(player, diaryCount, prideMultiplier);
         }
 
         int crestCount = baseCounts.getOrDefault(ModItems.RARE_GUARDIANS_CREST.get(), 0);
@@ -602,6 +607,15 @@ public class ModEvents {
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
+        if (level.getBlockState(pos).is(net.minecraft.tags.BlockTags.BEDS)) {
+            Map<Item, Integer> counts = BuffItemUtils.countAllItemsInBuffRow(player);
+            int healingLinensCount = counts.getOrDefault(ModItems.UNCOMMON_HEALING_LINENS.get(), 0);
+            if (healingLinensCount > 0) {
+                HealingLinensAbility.apply(player, healingLinensCount);
+                // ベッド本来の機能（睡眠）を妨げないように、ここではイベントをキャンセルしない
+            }
+        }
+
         int sewingCount = baseCounts.getOrDefault(ModItems.UNCOMMON_SECRET_ART_OF_SEWING.get(), 0);
         if (sewingCount > 0) {
             SecretArtOfSewingAbility.apply(event, sewingCount, prideMultiplier);
@@ -630,31 +644,9 @@ public class ModEvents {
         }
     }
 
-    /**
-     * 任務18：プレイヤーがベッドから起きた瞬間の処理
-     */
-    @SubscribeEvent
-    public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
-        Player player = event.getEntity();
-        // サーバーサイドであり、かつワールドの時刻が朝になっている（＝夜を正常に過ごした）場合のみ処理
-        if (player.level().isClientSide() || !player.level().isDay()) {
-            return;
-        }
-
-        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-        if (baseCounts.isEmpty()) return;
-
-        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-
-        int healingLinensCount = baseCounts.getOrDefault(ModItems.UNCOMMON_HEALING_LINENS.get(), 0);
-        if (healingLinensCount > 0) {
-            HealingLinensAbility.apply(player, healingLinensCount, prideMultiplier);
-        }
-    }
 
     /**
-     * 任務19(改)：サーバーのリソースがリロードされる際に、我々のリスナーを登録する
+     * 任務19：サーバーのリソースがリロードされる際に、我々のリスナーを登録する
      */
     @SubscribeEvent
     public static void onAddReloadListener(AddReloadListenerEvent event) {
@@ -745,5 +737,41 @@ public class ModEvents {
                         }
                     }
                 });
+    }
+
+    /**
+     * 三途の川の渡し船のタイマーを管理するヘルパーメソッド
+     * @param player サーバーサイドのプレイヤー
+     * @return タイマーが作動中であればtrue、そうでなければfalse
+     */
+    private static boolean handleFerrymansBargeTimer(ServerPlayer player) {
+        // NBTにタイマータグがあるかチェック
+        if (!player.getPersistentData().contains(FerrymansBargeAbility.BARGE_TICKS_TAG)) {
+            return false; // タイマーは作動していない
+        }
+
+        // --- タイマーが作動中の場合の処理 ---
+        int ticksLeft = player.getPersistentData().getInt(FerrymansBargeAbility.BARGE_TICKS_TAG);
+
+        if (ticksLeft > 0) {
+            // タイマーを1減らす
+            player.getPersistentData().putInt(FerrymansBargeAbility.BARGE_TICKS_TAG, ticksLeft - 1);
+
+            // 1秒に1回クライアントへ通知
+            if (ticksLeft % 20 == 0) {
+                ModMessages.sendToPlayer(new BargeTimerSyncS2CPacket(ticksLeft), player);
+            }
+        } else {
+            // タイマーが0になったら、復活処理を実行
+            // 復活時のHP計算に必要な情報をここで集める
+            Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
+            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
+            int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+            int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
+
+            FerrymansBargeAbility.endFerry(player, bargeCount, prideMultiplier);
+        }
+
+        return true; // タイマーは作動中
     }
 }

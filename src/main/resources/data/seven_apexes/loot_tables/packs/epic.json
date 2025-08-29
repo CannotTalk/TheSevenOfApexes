@@ -17,7 +17,8 @@
         { "type": "minecraft:item", "name": "seven_apexes:epic_fiends_bargain" },
         { "type": "minecraft:item", "name": "seven_apexes:epic_reversal_hourglass" },
         { "type": "minecraft:item", "name": "seven_apexes:epic_goliaths_gavel" },
-        { "type": "minecraft:item", "name": "seven_apexes:epic_heart_of_storm" }
+        { "type": "minecraft:item", "name": "seven_apexes:epic_heart_of_storm" },
+        { "type": "minecraft:item", "name": "seven_apexes:epic_ferrymans_barge"}
       ]
     }
   ]

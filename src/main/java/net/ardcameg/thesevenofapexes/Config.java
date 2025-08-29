@@ -232,6 +232,9 @@ public class Config {
         ferrymanBargeBaseRegenerate = BUILDER
                 .comment("Base Health restored by the Ferryman Barge")
                 .defineInRange("ferrymanBargeBaseRegenerate", 2.0, 0.0, 100.0);
+        ferrymanBargeSpectatorBaseTicks = BUILDER
+                .comment("Base time ticks for Spectator Mode")
+                .defineInRange("ferrymanBargeSpectatorBaseTicks", 20, 1, 1200);
 
         BUILDER.pop(); // カテゴリ分けを終了
     }
@@ -272,6 +275,7 @@ public class Config {
     public static final ModConfigSpec.DoubleValue goliathsGavelAttackSpeedModifier;
     public static final ModConfigSpec.DoubleValue goliathsGavelMovementSpeedModifier;
     public static final ModConfigSpec.DoubleValue ferrymanBargeBaseRegenerate;
+    public static final ModConfigSpec.IntValue ferrymanBargeSpectatorBaseTicks;
 
     static {
         BUILDER.push("Rare Rarity Ability");
@@ -379,9 +383,9 @@ public class Config {
                 .comment("Additional chance to drop flint from gravel with Lucky Flint.")
                 .defineInRange("luckyFlintFlintDropAdditionalChance", 0.15, 0, 100.0);
 
-        healingLinensRegenerateHealth = BUILDER
-                .comment("Health recovered when sleeping in bed overnight by Healing Linens.")
-                .defineInRange("healingLinensRegenerateHealth", 10.0, 0, 100.0);
+        healingLinensHealThreshold = BUILDER
+                .comment("Health recovered when right-clicked a bed by Healing Linens.")
+                .defineInRange("healingLinensHealThreshold", 6.0, 0, 100.0);
 
         BUILDER.pop();
     }
@@ -390,12 +394,19 @@ public class Config {
     public static final ModConfigSpec.DoubleValue scentOfCompostBoostComposterChance;
     public static final ModConfigSpec.DoubleValue fertileClodExtraBornmealChance;
     public static final ModConfigSpec.DoubleValue luckyFlintFlintDropAdditionalChance;
-    public static final ModConfigSpec.DoubleValue healingLinensRegenerateHealth;
+    public static final ModConfigSpec.DoubleValue healingLinensHealThreshold;
 
     static {
         BUILDER.push("Common Rarity Ability");
+
+        oldAnglersDiaryMessageCount = BUILDER
+                .comment("The total number of messages available for the Old Angler's Diary.")
+                .defineInRange("oldAnglersDiaryMessageCount", 20, 1, 255);
+
         BUILDER.pop();
     }
+
+    public static final ModConfigSpec.IntValue oldAnglersDiaryMessageCount;
 
 
     static final ModConfigSpec SPEC = BUILDER.build();

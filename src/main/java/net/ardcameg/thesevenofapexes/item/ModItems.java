@@ -189,6 +189,22 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.COMMON)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_RAINBOW_SHARD = ITEMS.register("common_rainbow_shard",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_UNLUCKY_RABBIT = ITEMS.register("common_unlucky_rabbit",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_HOLLOW_SHELL = ITEMS.register("common_hollow_shell",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_OLD_ANGLERS_DIARY = ITEMS.register("common_old_anglers_diary",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
 
 
 
