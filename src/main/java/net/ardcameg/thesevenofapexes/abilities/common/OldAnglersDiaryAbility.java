@@ -1,24 +1,18 @@
-// net/ardcameg/thesevenofapexes/abilities/common/OldAnglersDiaryAbility.java
-
 package net.ardcameg.thesevenofapexes.abilities.common;
 
-import net.ardcameg.thesevenofapexes.Config; // Configをimport
+import net.ardcameg.thesevenofapexes.Config;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FishingRodItem;
 
-// Listのimportは不要になる
 import java.util.Random;
 
 public final class OldAnglersDiaryAbility {
     private OldAnglersDiaryAbility() {}
     private static final Random RANDOM = new Random();
 
-    // ハードコードされたリストは完全に削除
-    // private static final List<String> DIARY_MESSAGES = List.of(...);
-
     /**
-     * "古い釣り人の日誌"の効果を適用する (新ロジック)
+     * "古い釣り人の日誌"の効果を適用する
      */
     public static void apply(Player player, int diaryCount, int prideMultiplier) {
         if (diaryCount <= 0) return;
