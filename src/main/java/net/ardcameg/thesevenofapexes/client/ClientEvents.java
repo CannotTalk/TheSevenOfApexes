@@ -21,7 +21,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
         if (KeyBinding.EAT_BLOCK_KEY.consumeClick()) {
-            System.out.println("KEY PRESSED");
             // 郵便局を通して、新しい「ブロック食べたよ」の手紙をサーバーに送る
             ModMessages.sendToServer(new EatBlockC2SPacket());
         }

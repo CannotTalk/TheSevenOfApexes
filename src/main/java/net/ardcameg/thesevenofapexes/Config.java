@@ -234,7 +234,7 @@ public class Config {
                 .defineInRange("ferrymanBargeBaseRegenerate", 2.0, 0.0, 100.0);
         ferrymanBargeSpectatorBaseTicks = BUILDER
                 .comment("Base time ticks for Spectator Mode")
-                .defineInRange("ferrymanBargeSpectatorBaseTicks", 20, 1, 1200);
+                .defineInRange("ferrymanBargeSpectatorBaseTicks", 100, 1, 1200);
 
         BUILDER.pop(); // カテゴリ分けを終了
     }
