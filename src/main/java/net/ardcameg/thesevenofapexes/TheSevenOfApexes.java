@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes;
 
+import net.ardcameg.thesevenofapexes.block.ModBlocks;
 import net.ardcameg.thesevenofapexes.item.ModCreativeModeTab;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
@@ -33,6 +34,7 @@ public class TheSevenOfApexes {
         ModCreativeModeTab.register(modEventBus);
 
         ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
 
         // Register the item to a creative tab

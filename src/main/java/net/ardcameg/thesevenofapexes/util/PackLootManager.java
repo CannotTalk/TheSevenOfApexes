@@ -29,13 +29,11 @@ public final class PackLootManager {
             giveRandomItem(player, List.of(ModItems.RARE_PACK.get()));
         } else {
             double itemRoll = RANDOM.nextDouble();
-            if (itemRoll < 0.001) {
-                giveRandomItem(player, ModLootTables.getLegendaryItems());
-            } else if (itemRoll < 0.001 + 0.05) {
+            if (itemRoll < 0.05) {
                 giveRandomItem(player, ModLootTables.getEpicItems());
-            } else if (itemRoll < 0.001 + 0.05 + 0.15) {
+            } else if (itemRoll < 0.05 + 0.15) {
                 giveRandomItem(player, ModLootTables.getRareItems());
-            } else if (itemRoll < 0.001 + 0.05 + 0.15 + 0.30) {
+            } else if (itemRoll < 0.05 + 0.15 + 0.30) {
                 giveRandomItem(player, ModLootTables.getUncommonItems());
             } else {
                 giveRandomItem(player, ModLootTables.getCommonItems());
@@ -48,9 +46,7 @@ public final class PackLootManager {
      */
     public static void openRarePack(Player player) {
         double roll = RANDOM.nextDouble();
-        if (roll < 0.005) {
-            giveRandomItem(player, ModLootTables.getLegendaryItems());
-        } else if (roll < 0.005 + 0.25) {
+        if (roll < 0.25) {
             giveRandomItem(player, ModLootTables.getEpicItems());
         } else {
             giveRandomItem(player, ModLootTables.getRareItems());
@@ -62,15 +58,10 @@ public final class PackLootManager {
      */
     public static void openEpicPack(Player player) {
         double specialPackRoll = RANDOM.nextDouble();
-        if (specialPackRoll < 0.10) {
+        if (specialPackRoll < 0.025) {
             giveRandomItem(player, List.of(ModItems.LEGENDARY_PACK.get()));
         } else {
-            double itemRoll = RANDOM.nextDouble();
-            if (itemRoll < 0.01) {
-                giveRandomItem(player, ModLootTables.getLegendaryItems());
-            } else {
-                giveRandomItem(player, ModLootTables.getEpicItems());
-            }
+            giveRandomItem(player, ModLootTables.getEpicItems());
         }
     }
 
@@ -81,9 +72,6 @@ public final class PackLootManager {
         giveRandomItem(player, ModLootTables.getLegendaryItems());
     }
 
-    /**
-     * 指定されたリストからランダムなアイテムを1つプレイヤーに与える
-     */
     /**
      * 指定されたリストからランダムなアイテムを1つプレイヤーに与える
      */
@@ -104,31 +92,27 @@ public final class PackLootManager {
      * パンドラの箱を開封する
      */
     public static void openPandorasBox(Player player) {
-        // 1. プレイヤーが所持する禁忌級アイテムの数を数える
+
         int forbiddenItemCount = 0;
         for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
             if (player.getInventory().getItem(i).getItem() instanceof ForbiddenItem) {
                 forbiddenItemCount++;
             }
         }
-        // カーソル持ちもチェック
         if (player.containerMenu.getCarried().getItem() instanceof ForbiddenItem) {
             forbiddenItemCount++;
         }
 
-        // 2. 禁忌級アイテムが出る確率を計算
         // 基本確率55%から、所持数 * 5% を引く
         double forbiddenChance = 0.55 - (forbiddenItemCount * 0.05);
-        // 確率が0%未満にならないように制御
         forbiddenChance = Math.max(0.0, forbiddenChance);
 
-        // 3. 運命の抽選
         if (RANDOM.nextDouble() < forbiddenChance) {
-            // --- 地獄：禁忌級アイテムを排出 ---
+            // --- 禁忌級アイテムを排出 ---
             giveRandomItem(player, ModLootTables.getForbiddenItems());
             player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.5f);
         } else {
-            // --- 天国：高レアリティアイテムを排出 ---
+            // --- 高レアリティアイテムを排出 ---
             // 5%の確率で伝説級、95%で英雄級
             if (RANDOM.nextDouble() < 0.05) {
                 giveRandomItem(player, ModLootTables.getLegendaryItems());

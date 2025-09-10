@@ -72,6 +72,8 @@
   "item.seven_apexes.legendary_pack": "Legendary Pack",
   "item.seven_apexes.pandoras_box": "Pandora's Box",
 
+  "block.seven_apexes.altar_of_banishment": "Altar of Banishment",
+
   "key.category.seven_apexes": "The Seven of Apexes",
   "key.seven_apexes.eat_block": "Eat Block",
   "key.seven_apexes.soul_release": "Soul Release",
@@ -86,6 +88,10 @@
   "message.seven_apexes.barge_timer": "Returning to the mortal realm in... %s",
   "message.seven_apexes.forbidden_cannot_discard": "A strange power prevents you from letting go.",
   "message.seven_apexes.endless_insomnia_cant_sleep": "§4Tortured by endless sleepless nights...",
+
+  "message.seven_apexes.altar_no_curse": "§cYou still know nothing of the curse...",
+  "message.seven_apexes.altar_invalid_offering": "§4The ritual cannot be performed without a sacrifice...",
+  "message.seven_apexes.altar_success": "§aFreed from the curse and gained freedom!",
 
   "message.seven_apexes.diary.1": "§7§oThe fish seem lively today...§r",
   "message.seven_apexes.diary.2": "§7§oPatience is the angler's greatest virtue.§r",

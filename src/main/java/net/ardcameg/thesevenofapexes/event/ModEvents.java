@@ -7,7 +7,9 @@ import net.ardcameg.thesevenofapexes.abilities.legendary.*;
 import net.ardcameg.thesevenofapexes.abilities.rare.*;
 import net.ardcameg.thesevenofapexes.abilities.uncommon.*;
 import net.ardcameg.thesevenofapexes.abilities.common.*;
+import net.ardcameg.thesevenofapexes.abilities.block.*;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
+import net.ardcameg.thesevenofapexes.block.*;
 import net.ardcameg.thesevenofapexes.item.*;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
@@ -19,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
@@ -647,6 +650,19 @@ public class ModEvents {
         Player player = event.getEntity();
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
+
+        if(!(player.isShiftKeyDown())) {
+            if (level.getBlockState(pos).is(ModBlocks.ALTAR_OF_BANISHMENT.get())) {
+                // サーバーサイドでのみ、儀式のロジックを実行
+                if (!level.isClientSide) {
+                    PurificationAbility.performRitual((ServerPlayer) player);
+                }
+                // このインタラクションは成功した(SUCCESS)とマークし、これ以降の全ての右クリック処理（アイテムのuseメソッド呼び出しなど）を完全にキャンセルする
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+                return;
+            }
+        }
 
         if (level.isClientSide) return;
 

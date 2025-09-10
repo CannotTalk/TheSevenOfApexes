@@ -1,6 +1,7 @@
 package net.ardcameg.thesevenofapexes.item;
 
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
+import net.ardcameg.thesevenofapexes.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -90,6 +91,8 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.EPIC_PACK);
                         output.accept(ModItems.LEGENDARY_PACK);
                         output.accept(ModItems.PANDORAS_BOX);
+
+                        output.accept(ModBlocks.ALTAR_OF_BANISHMENT);
                     }))
                     .build());
 

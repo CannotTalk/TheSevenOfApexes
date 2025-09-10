@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "seven_apexes:block/altar_of_banishment_top",
+    "bottom": "seven_apexes:block/altar_of_banishment_bottom",
+    "side": "seven_apexes:block/altar_of_banishment_side"
+  }
+}
