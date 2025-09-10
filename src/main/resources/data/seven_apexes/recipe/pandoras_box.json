@@ -9,23 +9,22 @@
     "C": {
       "item": "minecraft:chest"
     },
+    "E": {
+      "item" : "seven_apexes:epic_pack"
+    },
+    "K": {
+      "item": "minecraft:paper"
+    },"N": {
+      "item": "minecraft:nether_star"
+    },
     "P": {
       "item" : "seven_apexes:random_pack"
     },
     "R": {
       "item" : "seven_apexes:rare_pack"
     },
-    "E": {
-      "item" : "seven_apexes:epic_pack"
-    },
-    "N": {
-      "item": "minecraft:nether_star"
-    },
     "T": {
       "item": "minecraft:trapped_chest"
-    },
-    "K": {
-      "item": "minecraft:paper"
     }
   },
   "result": {

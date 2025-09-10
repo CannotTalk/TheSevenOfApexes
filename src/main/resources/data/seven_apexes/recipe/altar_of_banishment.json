@@ -9,14 +9,14 @@
     "A": {
       "item": "minecraft:amethyst_block"
     },
-    "P": {
-      "item": "seven_apexes:pandoras_box"
-    },
     "C": {
       "item": "minecraft:crying_obsidian"
     },
     "N": {
       "item": "minecraft:nether_star"
+    },
+    "P": {
+      "item": "seven_apexes:pandoras_box"
     }
   },
   "result": {

@@ -9,11 +9,11 @@
     "G": {
       "item": "minecraft:gold_ingot"
     },
-    "I": {
-      "item": "minecraft:iron_block"
-    },
     "C": {
       "item": "minecraft:chest"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
     }
   },
   "result": {
