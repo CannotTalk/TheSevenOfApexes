@@ -7,9 +7,14 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TheSevenOfApexes.MOD_ID);
 
+    // --- LEGENDARY ---
     public static final DeferredItem<Item> LEGENDARY_PRIDE = ITEMS.register("legendary_pride" ,
             () -> new GlintingItem(new Item.Properties()
                     .stacksTo(1)));
@@ -38,6 +43,7 @@ public class ModItems {
             () -> new GlintingItem(new Item.Properties()
                     .stacksTo(1)));
 
+    // --- EPIC ---
     public static final DeferredItem<Item> EPIC_LIGHTNING_FIST = ITEMS.register("epic_lightning_fist",
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.EPIC)
@@ -99,6 +105,7 @@ public class ModItems {
                     .rarity(Rarity.EPIC)
                     .stacksTo(1)));
 
+    // --- RARE ---
     public static final DeferredItem<Item> RARE_NIGHT_OWL_EYES = ITEMS.register("rare_night_owl_eyes",
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.RARE)
@@ -148,6 +155,7 @@ public class ModItems {
                     .rarity(Rarity.RARE)
                     .stacksTo(1)));
 
+    // --- UNCOMMON ---
     public static final DeferredItem<Item> UNCOMMON_PEARL_EYE = ITEMS.register("uncommon_pearl_eye",
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.UNCOMMON)
@@ -181,6 +189,7 @@ public class ModItems {
                     .rarity(Rarity.UNCOMMON)
                     .stacksTo(1)));
 
+    // --- COMMON ---
     public static final DeferredItem<Item> COMMON_SHINING_AURA = ITEMS.register("common_shining_aura",
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.COMMON)
@@ -205,8 +214,39 @@ public class ModItems {
             () -> new Item(new Item.Properties()
                     .rarity(Rarity.COMMON)
                     .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_FRAGILE_SOUL = ITEMS.register("common_fragile_soul",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> COMMON_FORBIDDEN_MEMORY = ITEMS.register("common_forbidden_memory",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.COMMON)
+                    .stacksTo(1)));
 
-
+    // --- FORBIDDEN ---
+    public static final DeferredItem<Item> FORBIDDEN_HEART_OF_GLASS = ITEMS.register("forbidden_heart_of_glass",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_DEATHS_PREMONITION = ITEMS.register("forbidden_deaths_premonition",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_EARTHBOUND_CURSE = ITEMS.register("forbidden_earthbound_curse",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_TAUNTING_BEACON = ITEMS.register("forbidden_taunting_beacon",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_UNSTOPPABLE_IMPULSE = ITEMS.register("forbidden_unstoppable_impulse",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_ENDLESS_INSOMNIA = ITEMS.register("forbidden_endless_insomnia",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_PACT_OF_DECAY = ITEMS.register("forbidden_pact_of_decay",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_WHISPERS_OF_THE_VOID = ITEMS.register("forbidden_whispers_of_the_void",
+            () -> new ForbiddenItem(new Item.Properties().stacksTo(1)));
 
 
     // --- パックアイテム ---
@@ -222,6 +262,8 @@ public class ModItems {
     public static final DeferredItem<Item> LEGENDARY_PACK = ITEMS.register("legendary_pack",
             () -> new LegendaryPackItem(new Item.Properties()
                     .rarity(Rarity.COMMON)));
+    public static final DeferredItem<Item> PANDORAS_BOX = ITEMS.register("pandoras_box",
+            () -> new PandorasBoxItem(new Item.Properties().rarity(Rarity.EPIC)));
 
 
     public static void register(IEventBus eventBus) {

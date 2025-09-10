@@ -8,7 +8,9 @@
         { "type": "minecraft:item", "name": "seven_apexes:common_emperors_new_clothes" },
         { "type": "minecraft:item", "name": "seven_apexes:common_rainbow_shard"},
         { "type": "minecraft:item", "name": "seven_apexes:common_unlucky_rabbit"},
-        { "type": "minecraft:item", "name": "seven_apexes:common_old_anglers_diary"}
+        { "type": "minecraft:item", "name": "seven_apexes:common_old_anglers_diary"},
+        { "type": "minecraft:item", "name": "seven_apexes:common_fragile_soul" },
+        { "type": "minecraft:item", "name": "seven_apexes:common_forbidden_memory" }
       ]
     }
   ]

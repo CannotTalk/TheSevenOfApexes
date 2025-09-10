@@ -23,7 +23,7 @@ public final class OldAnglersDiaryAbility {
         if (isHoldingRod) {
             int finalCount = diaryCount * prideMultiplier;
 
-            // 確率は変更なし (約10秒に1回)
+            // 約10秒に1回
             if (RANDOM.nextInt(2000) < finalCount) {
                 // 1. Configからメッセージの総数を取得
                 int totalMessages = Config.oldAnglersDiaryMessageCount.get();

@@ -54,7 +54,7 @@ public class GluttonyAbility {
         int finalGaugeValue = baseGaugeValue + (int)Math.floor(baseGaugeValue * (finalCount - 1) * 0.5);
 
         player.level().removeBlock(blockPos, false);
-        player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1.0f, 1.0f);
+        player.level().playSound(null, player.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1.0f, 1.25f);
         player.swing(player.getUsedItemHand());
 
         // --- 3. データを読み込み、ゲージを加算 ---

@@ -53,21 +53,39 @@
   "item.seven_apexes.common_unlucky_rabbit": "Unlucky Rabbit",
   "item.seven_apexes.common_hollow_shell": "Hollow Shell",
   "item.seven_apexes.common_old_anglers_diary": "Old Angler's Diary",
+  "item.seven_apexes.common_fragile_soul": "Fragile Soul",
+  "item.seven_apexes.common_forbidden_memory": "Forbidden Memory",
+
+  "item.seven_apexes.forbidden_heart_of_glass": "Heart of Glass",
+  "item.seven_apexes.forbidden_deaths_premonition": "Death's Premonition",
+  "item.seven_apexes.forbidden_earthbound_curse": "Earthbound Curse",
+  "item.seven_apexes.forbidden_taunting_beacon": "Taunting Beacon",
+  "item.seven_apexes.forbidden_unstoppable_impulse": "Unstoppable Impulse",
+  "item.seven_apexes.forbidden_endless_insomnia": "Endless Insomnia",
+  "item.seven_apexes.forbidden_pact_of_decay": "Pact of Decay",
+  "item.seven_apexes.forbidden_whispers_of_the_void": "Whispers of the Void",
 
 
   "item.seven_apexes.random_pack": "Random Pack",
   "item.seven_apexes.rare_pack": "Rare Pack",
   "item.seven_apexes.epic_pack": "Epic Pack",
   "item.seven_apexes.legendary_pack": "Legendary Pack",
+  "item.seven_apexes.pandoras_box": "Pandora's Box",
 
   "key.category.seven_apexes": "The Seven of Apexes",
   "key.seven_apexes.eat_block": "Eat Block",
+  "key.seven_apexes.soul_release": "Soul Release",
 
   "creativetab.seven_apexes.seven_apexes_item": "The Seven of Apexes",
+
+  "tooltip.seven_apexes.forbidden_rarity": "§oForbidden Rarity§r",
+  "tooltip.seven_apexes.forbidden_warning": "It cannot be discarded.",
 
   "message.seven_apexes.phoenix_debuff": "Phoenix's curse weakening... %s",
   "message.seven_apexes.claws_activate": "§6§lNuff Said Bub...",
   "message.seven_apexes.barge_timer": "Returning to the mortal realm in... %s",
+  "message.seven_apexes.forbidden_cannot_discard": "A strange power prevents you from letting go.",
+  "message.seven_apexes.endless_insomnia_cant_sleep": "§4Tortured by endless sleepless nights...",
 
   "message.seven_apexes.diary.1": "§7§oThe fish seem lively today...§r",
   "message.seven_apexes.diary.2": "§7§oPatience is the angler's greatest virtue.§r",

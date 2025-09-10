@@ -83,8 +83,7 @@ public final class SunlightSacredSealAbility {
     private static void promotePlantGrowth(ServerLevel level, BlockPos center, int sunSealCount, int prideMultiplier) {
         int baseRadius = Config.sunsealBuffPlantsBaseRadius.getAsInt();
         int radius = baseRadius + sunSealCount;
-        // 処理を軽くするため、範囲内のブロックを全てチェックするのではなく、
-        // 聖印の数に応じて、ランダムな座標を数回チェックする方式に変更
+        // 聖印の数に応じて、ランダムな座標を数回チェックする
         int baseChecks = Config.sunsealBuffPlantsChecks.getAsInt();
         int attempts = sunSealCount * prideMultiplier * baseChecks; // 1個なら2回、2個なら4回試行
 

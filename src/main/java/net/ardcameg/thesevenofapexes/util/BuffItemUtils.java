@@ -1,8 +1,10 @@
 package net.ardcameg.thesevenofapexes.util;
 
+import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
 import net.ardcameg.thesevenofapexes.networking.packet.PlayTotemAnimationS2CPacket;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,7 +27,6 @@ public final class BuffItemUtils {
 
     /**
      * バフ列にあるすべてのアイテムとその数を数え上げ、マップとして返す
-     * どこからでも呼び出せるように public static に変更
      * @param player 調べるプレイヤー
      * @return <アイテムの種類, その数> のマップ
      */
@@ -42,7 +43,6 @@ public final class BuffItemUtils {
 
     /**
      * 指定したバフアイテムがいくつ有効化されているのかを返す
-     * どこからでも呼び出せるように public static に変更
      * @param player 調べるプレイヤー
      * @param itemToCheck 調べるアイテム
      * @return 有効化されているバフアイテムの数
@@ -147,5 +147,84 @@ public final class BuffItemUtils {
             }
         }
         return foundItems;
+    }
+
+    /**
+     * インベントリ全体にあるすべてのアイテムとその数を数え上げ、マップとして返す
+     * @param player 調べるプレイヤー
+     * @return <アイテムの種類, その数> のマップ
+     */
+    public static Map<Item, Integer> countAllItemsInInventory(Player player) {
+        Map<Item, Integer> itemCounts = new HashMap<>();
+        // メインインベントリ(36), アーマー(4), オフハンド(1)の合計41スロットをチェック
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (!stack.isEmpty()) {
+                itemCounts.put(stack.getItem(), itemCounts.getOrDefault(stack.getItem(), 0) + 1);
+            }
+        }
+        return itemCounts;
+    }
+
+    /**
+     * インベントリ全体から指定されたアイテムを1つ消費する
+     * @param player 対象のプレイヤー
+     * @param itemToConsume 消費させたいアイテム
+     * @return 消費に成功すればtrue、アイテムが見つからなければfalse
+     */
+    public static boolean consumeItemFromInventory(Player player, Item itemToConsume) {
+        // インベントリ全体（メイン、アーマー、オフハンド）を探す
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(itemToConsume)) {
+                stack.shrink(1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * プレイヤーが所持する全ての場所（インベントリ、アーマー、オフハンド、カーソル）を調査し、
+     * 指定されたアイテムの総数を返す。
+     * @param player 調査対象のプレイヤー
+     * @param itemToCount 数えるアイテム
+     * @return プレイヤーが所持するアイテムの総数
+     */
+    public static int countAllItemsForPlayer(Player player, Item itemToCount) {
+        int count = 0;
+        // メインインベントリ (36スロット)
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.is(itemToCount)) {
+                count += stack.getCount();
+            }
+        }
+        // アーマースロット (4スロット)
+        for (ItemStack stack : player.getInventory().armor) {
+            if (stack.is(itemToCount)) {
+                count += stack.getCount();
+            }
+        }
+        // オフハンドスロット (1スロット)
+        for (ItemStack stack : player.getInventory().offhand) {
+            if (stack.is(itemToCount)) {
+                count += stack.getCount();
+            }
+        }
+        // カーソルで持ち上げているアイテム
+        ItemStack carried = player.containerMenu.getCarried();
+        if (carried.is(itemToCount)) {
+            count += carried.getCount();
+        }
+        return count;
+    }
+
+    /**
+     * プレイヤーに禁忌級のアイテムが捨てられないことを知らせる
+     * @param player 知らせるプレイヤー
+     */
+    public static void sendForbiddenCantBeDiscarded(Player player){
+        if (!player.isLocalPlayer()) return;
+        player.sendSystemMessage(Component.translatable("message.seven_apexes.forbidden_cannot_discard"));
     }
 }

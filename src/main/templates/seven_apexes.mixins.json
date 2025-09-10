@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.ardcameg.thesevenofapexes.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractContainerMenuMixin",
+    "CommonHooksMixin",
+    "LocalPlayerMixin",
+    "ServerPlayerMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

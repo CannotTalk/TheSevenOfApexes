@@ -1,6 +1,7 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
 import net.ardcameg.thesevenofapexes.Config;
+import net.ardcameg.thesevenofapexes.item.ForbiddenItem;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +27,7 @@ public final class FerrymansBargeAbility {
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.is(ModItems.EPIC_FERRYMANS_BARGE.get())) {
+            if (stack.is(ModItems.EPIC_FERRYMANS_BARGE.get()) || stack.getItem() instanceof ForbiddenItem) {
                 bargesToKeep.put(i, stack.copy());
                 inventory.setItem(i, ItemStack.EMPTY);
             }

@@ -72,12 +72,24 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.COMMON_UNLUCKY_RABBIT);
                         output.accept(ModItems.COMMON_HOLLOW_SHELL);
                         output.accept(ModItems.COMMON_OLD_ANGLERS_DIARY);
+                        output.accept(ModItems.COMMON_FRAGILE_SOUL);
+                        output.accept(ModItems.COMMON_FORBIDDEN_MEMORY);
+
+                        output.accept(ModItems.FORBIDDEN_HEART_OF_GLASS);
+                        output.accept(ModItems.FORBIDDEN_DEATHS_PREMONITION);
+                        output.accept(ModItems.FORBIDDEN_EARTHBOUND_CURSE);
+                        output.accept(ModItems.FORBIDDEN_TAUNTING_BEACON);
+                        output.accept(ModItems.FORBIDDEN_UNSTOPPABLE_IMPULSE);
+                        output.accept(ModItems.FORBIDDEN_ENDLESS_INSOMNIA);
+                        output.accept(ModItems.FORBIDDEN_PACT_OF_DECAY);
+                        output.accept(ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID);
 
 
                         output.accept(ModItems.RANDOM_PACK);
                         output.accept(ModItems.RARE_PACK);
                         output.accept(ModItems.EPIC_PACK);
                         output.accept(ModItems.LEGENDARY_PACK);
+                        output.accept(ModItems.PANDORAS_BOX);
                     }))
                     .build());
 

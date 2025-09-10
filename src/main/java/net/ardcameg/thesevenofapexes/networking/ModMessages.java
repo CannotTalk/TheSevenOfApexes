@@ -10,24 +10,19 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class ModMessages {
-
     public static void register(IEventBus modEventBus) {
         modEventBus.addListener((RegisterPayloadHandlersEvent event) -> {
-            final PayloadRegistrar registrar = event.registrar(TheSevenOfApexes.MOD_ID)
-                    .versioned("1.0");
+            final PayloadRegistrar registrar = event.registrar(TheSevenOfApexes.MOD_ID).versioned("1.0");
 
             registrar.playToServer(
-                    EatBlockC2SPacket.TYPE,         // 期待値: Type<T>
-                    EatBlockC2SPacket.STREAM_CODEC, // 期待値: StreamCodec
-                    EatBlockC2SPacket::handle       // 期待値: IPayloadHandler
+                    EatBlockC2SPacket.TYPE,
+                    EatBlockC2SPacket.STREAM_CODEC,
+                    EatBlockC2SPacket::handle
             );
 
-            // クライアント行きの手紙(S2C)の受付登録
             registrar.playToClient(
                     PhoenixDebuffSyncS2CPacket.TYPE,
                     PhoenixDebuffSyncS2CPacket.STREAM_CODEC,
-                    // handler.client((packet, context) -> PhoenixDebuffSyncS2CPacket.handle(packet, context))
-                    // 上記は以下のように省略できる
                     PhoenixDebuffSyncS2CPacket::handle
             );
 
@@ -42,15 +37,25 @@ public class ModMessages {
                     BargeTimerSyncS2CPacket.STREAM_CODEC,
                     BargeTimerSyncS2CPacket::handle
             );
+
+            registrar.playToServer(
+                    SoulReleaseC2SPacket.TYPE,
+                    SoulReleaseC2SPacket.STREAM_CODEC,
+                    SoulReleaseC2SPacket::handle
+            );
+
+            registrar.playToClient(
+                    TimerSyncS2CPacket.TYPE,
+                    TimerSyncS2CPacket.STREAM_CODEC,
+                    TimerSyncS2CPacket::handle
+            );
         });
     }
 
-    // これは変更なし
     public static void sendToServer(CustomPacketPayload packet) {
         PacketDistributor.sendToServer(packet);
     }
 
-    // 特定のプレイヤーに手紙を送るための便利メソッド
     public static void sendToPlayer(CustomPacketPayload packet, ServerPlayer player) {
         PacketDistributor.sendToPlayer(player, packet);
     }

@@ -4,9 +4,6 @@ import net.ardcameg.thesevenofapexes.item.ModCreativeModeTab;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.EventBusSubscriber;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -55,7 +52,6 @@ public class TheSevenOfApexes {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

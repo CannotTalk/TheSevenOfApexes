@@ -2,6 +2,7 @@ package net.ardcameg.thesevenofapexes.abilities.rare;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -10,6 +11,12 @@ public final class HungryBanquetAbility {
     private HungryBanquetAbility() {}
 
     public static void convertDamageToHunger(LivingDamageEvent.Pre event, Player player, int banquetCount, int prideMultiplier) {
+
+        // 回避不能なダメージは肩代わりできない
+        if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
+
         if (banquetCount <= 0) return;
 
         FoodData foodData = player.getFoodData();
@@ -36,7 +43,7 @@ public final class HungryBanquetAbility {
             foodData.setFoodLevel(currentFoodLevel - foodToConsume);
             event.setNewDamage(incomingDamage - damageToAbsorb);
 
-            // --- 5. 演出 (変更なし) ---
+            // --- 5. 演出 ---
             player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5f, 2.0f);
         }
     }

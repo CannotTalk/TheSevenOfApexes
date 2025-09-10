@@ -16,8 +16,8 @@ public class ModDataComponents {
 
     public static final java.util.function.Supplier<DataComponentType<List<Float>>> STORED_DAMAGE = DATA_COMPONENTS.register("stored_damage", () ->
             DataComponentType.<List<Float>>builder()
-                    .persistent(Codec.FLOAT.listOf()) // ディスクに保存する方法
-                    .networkSynchronized(ByteBufCodecs.FLOAT.apply(ByteBufCodecs.list())) // サーバーとクライアントで同期する方法
+                    .persistent(Codec.FLOAT.listOf())
+                    .networkSynchronized(ByteBufCodecs.FLOAT.apply(ByteBufCodecs.list()))
                     .build()
     );
 

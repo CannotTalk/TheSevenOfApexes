@@ -87,7 +87,7 @@ public final class LustAbility {
             }
         }
 
-        // --- 4. プレイヤーを蘇生させる (変更なし) ---
+        // --- 4. プレイヤーを蘇生させる ---
         float finalHealth = Math.min(totalHealthToRevive, player.getMaxHealth());
         player.setHealth(finalHealth);
 

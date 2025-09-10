@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  "PTR",
+  "KCK",
+  "ETN"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "P": {
+      "item" : "seven_apexes:random_pack"
+    },
+    "R": {
+      "item" : "seven_apexes:rare_pack"
+    },
+    "E": {
+      "item" : "seven_apexes:epic_pack"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "T": {
+      "item": "minecraft:trapped_chest"
+    },
+    "K": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "id": "seven_apexes:pandoras_box",
+    "count": 1
+  }
+}

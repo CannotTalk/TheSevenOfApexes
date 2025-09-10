@@ -93,7 +93,7 @@ public final class VoidMantleAbility {
         showEquipment(player);
         player.level().playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.5f, 0.5f);
 
-        // --- 消失判定 (変更なし) ---
+        // --- 消失判定 ---
         List<ItemStack> mantles = BuffItemUtils.findItemsInBuffRow(player, ModItems.EPIC_VOID_MANTLE.get());
         float vanishChance = Config.voidMantleVanishChance.get().floatValue();
         for (ItemStack mantle : mantles) {

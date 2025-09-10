@@ -6,6 +6,7 @@ import net.ardcameg.thesevenofapexes.item.component.ModDataComponents;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
@@ -19,6 +20,12 @@ public final class ScarredGrailAbility {
     private static final Random RANDOM = new Random();
 
     public static void onPlayerDamaged(LivingDamageEvent.Pre event, Player player) {
+        // ダメージソースが「無敵貫通」属性を持っている場合（/killなど）、
+        // 聖杯は何もしないで、そのままダメージを受け入れる。
+        if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
+
         List<ItemStack> grails = findGrails(player);
         if (grails.isEmpty()) return;
 
@@ -46,9 +53,13 @@ public final class ScarredGrailAbility {
             }
 
             BuffItemUtils.playTotemAnimation(player, ModItems.EPIC_SCARRED_GRAIL.get());
-            player.getPersistentData().putBoolean("TAKING_GRAIL_DAMAGE", true);
-            player.hurt(player.damageSources().magic(), totalDamageToTake);
-            player.getPersistentData().remove("TAKING_GRAIL_DAMAGE");
+
+            try {
+                player.getPersistentData().putBoolean("TAKING_GRAIL_DAMAGE", true);
+                player.hurt(player.damageSources().magic(), totalDamageToTake);
+            } finally {
+                player.getPersistentData().remove("TAKING_GRAIL_DAMAGE");
+            }
         }
     }
 

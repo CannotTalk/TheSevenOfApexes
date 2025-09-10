@@ -3,6 +3,7 @@ package net.ardcameg.thesevenofapexes.abilities.epic;
 import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -21,32 +22,41 @@ public final class ReversalHourglassAbility {
     /**
      * 任務1：ダメージを受けた後に、反射またはカウンターダメージを与える
      */
-    public static void onPlayerDamaged(LivingDamageEvent.Post event, Player player, Entity attacker, int hourglassCount, int prideMultiplier) {
+    public static void onPrePlayerDamage(LivingDamageEvent.Pre event, Player player, Entity attacker, int hourglassCount, int prideMultiplier) {
         if (hourglassCount <= 0 || !(attacker instanceof LivingEntity livingAttacker)) return;
 
-        int finalCount = hourglassCount * prideMultiplier;
-        float damageTaken = event.getNewDamage();
+        // 反射ダメージによる無限ループを防ぐ
+        if (event.getSource().typeHolder().is(DamageTypes.THORNS)) return; // バニラのとげや我々の反射を弾く
 
-        // --- 1. 反射確率を計算 ---
-        // 基本10%、追加1個あたり1%上昇
+        int finalCount = hourglassCount * prideMultiplier;
+
         float reflectBaseChance = Config.reversalHourglassProcBaseChance.get().floatValue();
         float reflectChance = reflectBaseChance + (finalCount - 1) * (reflectBaseChance / 2);
-        float reflectRate = Config.reversalHourglassReflectRate.get().floatValue();
 
         if (RANDOM.nextFloat() < reflectChance) {
             // --- 反射成功！ ---
-            // プレイヤーが受けたダメージを0にし、そのダメージをそのまま相手に返す
-            // Postイベントではダメージ変更できないため、プレイヤーの体力を手動で戻す
-            player.setHealth(player.getHealth() + damageTaken);
-            livingAttacker.hurt(player.damageSources().thorns(player), damageTaken);
+            float damageToReflect = event.getNewDamage();
+            event.setNewDamage(0); // ダメージを完全にキャンセル
+            livingAttacker.hurt(player.damageSources().thorns(player), damageToReflect);
             // TODO: 反射成功の派手なエフェクト
-        } else {
-            // --- 反射失敗、カウンターダメージ ---
-            // 受けたダメージの50%を計算
-            float counterDamage = damageTaken * reflectRate * finalCount;
-            livingAttacker.hurt(player.damageSources().magic(), counterDamage);
-            // TODO: カウンターダメージのエフェクト
         }
+        // 反射失敗時のカウンターダメージは Post イベントで行うので、ここでは何もしない
+    }
+
+    public static void onPostPlayerDamage(LivingDamageEvent.Post event, Player player, Entity attacker, int hourglassCount, int prideMultiplier) {
+        if (hourglassCount <= 0 || !(attacker instanceof LivingEntity livingAttacker)) return;
+
+        // 既に反射が成功している（ダメージが0になっている）場合はカウンターしない
+        if (event.getNewDamage() <= 0) return;
+
+        int finalCount = hourglassCount * prideMultiplier;
+        float damageTaken = event.getNewDamage();
+        float reflectRate = Config.reversalHourglassReflectRate.get().floatValue();
+
+        // --- カウンターダメージ ---
+        float counterDamage = damageTaken * reflectRate * finalCount;
+        livingAttacker.hurt(player.damageSources().magic(), counterDamage);
+        // TODO: カウンターダメージのエフェクト
     }
 
     /**

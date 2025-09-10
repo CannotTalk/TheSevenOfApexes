@@ -2,11 +2,13 @@ package net.ardcameg.thesevenofapexes.event;
 
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
 import net.ardcameg.thesevenofapexes.abilities.epic.*;
+import net.ardcameg.thesevenofapexes.abilities.forbidden.*;
 import net.ardcameg.thesevenofapexes.abilities.legendary.*;
 import net.ardcameg.thesevenofapexes.abilities.rare.*;
 import net.ardcameg.thesevenofapexes.abilities.uncommon.*;
 import net.ardcameg.thesevenofapexes.abilities.common.*;
 import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
+import net.ardcameg.thesevenofapexes.item.*;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
 import net.ardcameg.thesevenofapexes.networking.packet.*;
@@ -16,17 +18,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.CropBlock;
@@ -37,14 +42,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -57,12 +58,13 @@ public class ModEvents {
 
     // --- 記録簿 (State Management) ---
     private static final Map<UUID, Set<UUID>> ENVY_COPIED_ENTITIES = new HashMap<>();
-    private static final Map<UUID, Vec3> PLAYER_LAST_POSITION = new HashMap<>();
+    public static final Map<UUID, Vec3> PLAYER_LAST_POSITION = new HashMap<>();
     private static final Map<UUID, Integer> PLAYER_STANDING_TICKS = new HashMap<>();
     private static final Set<LivingEntity> STUNNED_ENTITIES = new HashSet<>();
     private static final Set<UUID> GRAIL_DAMAGE_FLAG = new HashSet<>();
     private static final Set<UUID> CRITICAL_HIT_FLAG = new HashSet<>();
-    private static final String HEAL_ON_WAKE_UP_TAG = "HealOnWakeUp";
+    private static final Map<UUID, List<ItemStack>> FORBIDDEN_ITEM_KEEPER = new HashMap<>();
+    private static final Map<UUID, Integer> VOID_STANDING_TICKS = new HashMap<>();
 
     /**
      * 任務1：プレイヤーがダメージを受けた"後"の処理
@@ -71,9 +73,7 @@ public class ModEvents {
     public static void onPlayerDamaged(LivingDamageEvent.Post event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide) return;
 
-        DamageSource damageSource = event.getSource();
-        Entity attacker = damageSource.getEntity();
-
+        Entity attacker = event.getSource().getEntity();
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         if (baseCounts.isEmpty()) return;
 
@@ -92,15 +92,7 @@ public class ModEvents {
 
         int reversalHourglassCount = baseCounts.getOrDefault(ModItems.EPIC_REVERSAL_HOURGLASS.get(), 0);
         if (reversalHourglassCount > 0 && attacker != null) {
-            ReversalHourglassAbility.onPlayerDamaged(event, player, attacker, reversalHourglassCount, prideMultiplier);
-        }
-
-        int lightningFistCount = baseCounts.getOrDefault(ModItems.EPIC_LIGHTNING_FIST.get(), 0);
-        if (lightningFistCount > 0) {
-            int lastChainCount = player.getPersistentData().getInt(LightningFistAbility.CHAIN_COUNT_TAG);
-            if (lastChainCount > 0) {
-                player.setHealth(player.getHealth() - lastChainCount);
-            }
+            ReversalHourglassAbility.onPostPlayerDamage(event, player, attacker, reversalHourglassCount, prideMultiplier);
         }
 
         int scytheCount = baseCounts.getOrDefault(ModItems.RARE_REAPERS_SCYTHE.get(), 0);
@@ -108,6 +100,11 @@ public class ModEvents {
             if (attacker != null && attacker != player) {
                 ReapersScytheAbility.applyWitherOnDamaged(player, scytheCount, prideMultiplier);
             }
+        }
+
+        int memoryCount = baseCounts.getOrDefault(ModItems.COMMON_FORBIDDEN_MEMORY.get(), 0);
+        if (memoryCount > 0) {
+            ForbiddenMemoryAbility.apply(player, event.getNewDamage(), memoryCount, prideMultiplier);
         }
     }
 
@@ -120,16 +117,14 @@ public class ModEvents {
         Entity attacker = event.getSource().getEntity();
 
         if (attacker instanceof Player player && target instanceof LivingEntity livingTarget) {
-
             if (player.level().isClientSide) return;
-
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if (baseCounts.isEmpty()) return;
 
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            int envyCount = baseCounts.getOrDefault(ModItems.LEGENDARY_ENVY, 0);
+            int envyCount = baseCounts.getOrDefault(ModItems.LEGENDARY_ENVY.get(), 0);
             if (envyCount > 0) {
                 EnvyAbility.apply(player, livingTarget, ENVY_COPIED_ENTITIES, envyCount, prideMultiplier);
             }
@@ -137,13 +132,6 @@ public class ModEvents {
             int fiendsBargainCount = baseCounts.getOrDefault(ModItems.EPIC_FIENDS_BARGAIN.get(), 0);
             if (fiendsBargainCount > 0) {
                 FiendsBargainAbility.apply(event, player, livingTarget, fiendsBargainCount, prideMultiplier);
-            }
-
-            int deadeyeGlassCount = baseCounts.getOrDefault(ModItems.RARE_DEADEYE_GLASS.get(), 0);
-            if (deadeyeGlassCount > 0) {
-                if (!CRITICAL_HIT_FLAG.contains(player.getUUID())) {
-                    DeadeyeGlassAbility.onNormalAttack(event);
-                }
             }
         }
 
@@ -153,39 +141,23 @@ public class ModEvents {
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            // 渡し船の致死ダメージ肩代わり処理
             int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
             if (bargeCount > 0) {
-                // このダメージで死ぬかどうかを判定
-                if (player.getHealth() - event.getNewDamage() <= 0) {
-                    // ダメージをキャンセル
+                if (player.getHealth() - event.getNewDamage() <= 0 && !event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                     event.setNewDamage(0f);
-                    // 渡し船を発動
                     FerrymansBargeAbility.startFerry(player, bargeCount, prideMultiplier);
-                    return; // 渡し船が発動したので、以降のダメージ処理は全てスキップ
+                    return;
                 }
-            }
-
-            int pearlEyeCount = baseCounts.getOrDefault(ModItems.UNCOMMON_PEARL_EYE, 0);
-            if (pearlEyeCount > 0) {
-                PearlEyeAbility.reduceEnderPearlDamage(event, pearlEyeCount, prideMultiplier);
-            }
-
-            int hungryBanquetCount = baseCounts.getOrDefault(ModItems.RARE_HUNGRY_BANQUET.get(), 0);
-            if (hungryBanquetCount > 0) {
-                HungryBanquetAbility.convertDamageToHunger(event, player, hungryBanquetCount, prideMultiplier);
-                if (event.getNewDamage() <= 0) return;
             }
 
             int scarredGrailCount = baseCounts.getOrDefault(ModItems.EPIC_SCARRED_GRAIL.get(), 0);
             if (scarredGrailCount > 0) {
-                ScarredGrailAbility.onPlayerDamaged(event, player);
-                if (event.getNewDamage() == 0) return;
-            }
-
-            int berserkersDragCount = baseCounts.getOrDefault(ModItems.EPIC_BERSERKERS_DRAG.get(), 0);
-            if (berserkersDragCount > 0) {
-                BerserkersDragAbility.onPlayerDamaged(event, player, berserkersDragCount, prideMultiplier);
+                if (!player.getPersistentData().getBoolean("TAKING_GRAIL_DAMAGE")) {
+                    ScarredGrailAbility.onPlayerDamaged(event, player);
+                    if (event.getNewDamage() == 0) {
+                        return;
+                    }
+                }
             }
         }
     }
@@ -197,6 +169,31 @@ public class ModEvents {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) return;
+
+        if (!serverPlayer.isAlive()) {
+            return;
+        }
+
+        DeathsPremonitionAbility.update(serverPlayer);
+        UnstoppableImpulseAbility.update(serverPlayer);
+        PactOfDecayAbility.update(serverPlayer);
+        WhispersOfTheVoidAbility.update(serverPlayer);
+
+        // 2. その他の禁忌級アイテムの効果を適用
+        Map<Item, Integer> forbiddenCounts = BuffItemUtils.countAllItemsInInventory(player);
+
+        int heartOfGlassCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_HEART_OF_GLASS.get(), 0);
+        HeartOfGlassAbility.updateEffect(player, heartOfGlassCount);
+
+        if (player.level().getGameTime() % 20 == 0) {
+            int beaconCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_TAUNTING_BEACON.get(), 0);
+            if (!(player.isCreative() || player.isSpectator()) && beaconCount > 0) {
+                TauntingBeaconAbility.applyAura(serverPlayer);
+            }
+        }
+
+        int whispersCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID.get(), 0);
+
 
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
@@ -304,6 +301,9 @@ public class ModEvents {
             OldAnglersDiaryAbility.apply(player, diaryCount, prideMultiplier);
         }
 
+        int fragileSoulCount = baseCounts.getOrDefault(ModItems.COMMON_FRAGILE_SOUL.get(), 0);
+        FragileSoulAbility.updateEffect(player, fragileSoulCount, prideMultiplier);
+
         int crestCount = baseCounts.getOrDefault(ModItems.RARE_GUARDIANS_CREST.get(), 0);
         if (crestCount > 0) {
             boolean isJumpingOrFalling = !player.onGround() && player.getDeltaMovement().y > 0;
@@ -313,7 +313,7 @@ public class ModEvents {
             }
         }
 
-        if (slothCount > 0 || moonSealCount > 0) {
+        if (slothCount > 0 || moonSealCount > 0 || whispersCount > 0) {
             PLAYER_LAST_POSITION.put(player.getUUID(), player.position());
         } else {
             PLAYER_LAST_POSITION.remove(player.getUUID());
@@ -325,6 +325,30 @@ public class ModEvents {
      */
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
+
+        if (event.getEntity() instanceof Player player &&
+                !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+
+            List<ItemStack> itemsToKeep = new ArrayList<>();
+            // Iteratorを使って安全にリストから要素を削除する
+            Iterator<ItemEntity> iterator = event.getDrops().iterator();
+            while (iterator.hasNext()) {
+                ItemEntity drop = iterator.next();
+                ItemStack stack = drop.getItem();
+
+                // ドロップ品がForbiddenItemかどうかをチェック
+                if (stack.getItem() instanceof ForbiddenItem) {
+                    itemsToKeep.add(stack.copy()); // 退避リストに追加
+                    iterator.remove(); // ドロップ品リストから削除
+                }
+            }
+
+            // 退避させるアイテムがあれば、KEEPERに保存
+            if (!itemsToKeep.isEmpty()) {
+                FORBIDDEN_ITEM_KEEPER.put(player.getUUID(), itemsToKeep);
+            }
+        }
+
         if (!(event.getSource().getEntity() instanceof Player player)) return;
 
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
@@ -396,28 +420,35 @@ public class ModEvents {
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.isEndConquered()) return;
         Player player = event.getEntity();
+        if(player instanceof ServerPlayer serverPlayer) { // サーバーサイドでのみ処理
+            UnstoppableImpulseAbility.pause(serverPlayer);
+            WhispersOfTheVoidAbility.pause(serverPlayer); // 猶予期間を開始させる
+        }
         player.getPersistentData().remove("GluttonyGauge");
         player.getPersistentData().remove("GluttonyLevel");
         player.getPersistentData().remove(LightningFistAbility.CHAIN_COUNT_TAG);
     }
 
     /**
-     * 任務7：プレイヤーが死亡する直前の処理
+     * 任務7-A：エンティティが死亡する直前の処理【蘇生判定】
+     * 最も高い優先度で実行され、蘇生を試みる。
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onPlayerDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || player.level().isClientSide) return;
+    public static void onLivingDeathAttemptRevive(LivingDeathEvent event) {
+        // プレイヤー以外の死亡はここでは処理しない
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        if (DeathsPremonitionAbility.shouldCancelRevive(player)) {
+            return;
+        }
 
         Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
         if(baseCounts.isEmpty()) return;
 
         int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
         int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
-
-        if (player.getPersistentData().getBoolean("TAKING_GRAIL_DAMAGE")) {
-            if (GRAIL_DAMAGE_FLAG.contains(player.getUUID())) return;
-            GRAIL_DAMAGE_FLAG.add(player.getUUID());
-        }
 
         int lustCount = baseCounts.getOrDefault(ModItems.LEGENDARY_LUST.get(), 0);
         if (lustCount > 0) {
@@ -445,13 +476,33 @@ public class ModEvents {
     }
 
     /**
+     * 任務7-B：エンティティの死亡が確定した"後"の処理【後処理】
+     * 最も低い優先度で実行される。
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLivingDeathConfirmed(LivingDeathEvent event) {
+        // キルによるリセット」のロジックを、正しい形で復活させる
+        if (!(event.getEntity() instanceof Player)
+                && event.getSource().getEntity() instanceof ServerPlayer attacker) {
+            if (BuffItemUtils.countAllItemsForPlayer(attacker, ModItems.FORBIDDEN_UNSTOPPABLE_IMPULSE.get()) > 0) {
+                UnstoppableImpulseAbility.onKill(attacker);
+            }
+        }
+
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        if (event.isCanceled()) {
+            return;
+        }
+    }
+
+    /**
      * 任務8：プレイヤーが敵を攻撃し、ダメージ計算が終わった"後"の処理
      */
     @SubscribeEvent
     public static void onPlayerAttackPostDamage(LivingDamageEvent.Post event) {
         if (event.getSource().getEntity() instanceof Player player && event.getEntity() instanceof LivingEntity target) {
-
-            if (player.level().isClientSide) return;
 
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
             if(baseCounts.isEmpty()) return;
@@ -466,8 +517,6 @@ public class ModEvents {
 
             int lifeSteelStickCount = baseCounts.getOrDefault(ModItems.EPIC_LIFE_STEAL_STICK.get(), 0);
             if (lifeSteelStickCount > 0) {
-                // 旧: LifeSteelStickAbility.applyLifeSteal(player, target, lifeSteelStickCount, prideMultiplier);
-                // 新: eventから実際に与えたダメージを取得して渡す
                 LifeStealStickAbility.applyLifeSteal(player, event.getNewDamage(), lifeSteelStickCount, prideMultiplier);
             }
 
@@ -612,7 +661,7 @@ public class ModEvents {
             int healingLinensCount = counts.getOrDefault(ModItems.UNCOMMON_HEALING_LINENS.get(), 0);
             if (healingLinensCount > 0) {
                 HealingLinensAbility.apply(player, healingLinensCount);
-                // ベッド本来の機能（睡眠）を妨げないように、ここではイベントをキャンセルしない
+                        // ベッド本来の機能（睡眠）を妨げないように、ここではイベントをキャンセルしない
             }
         }
 
@@ -653,9 +702,40 @@ public class ModEvents {
         event.addListener(new PackLootTableReloadListener());
     }
 
+    /**
+     * 任務：プレイヤーがリスポーンする際の処理
+     */
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        if (!event.isWasDeath()) return;
 
+        // 退避させていた禁忌アイテムを、新しいプレイヤーに戻す
+        List<ItemStack> keptItems = FORBIDDEN_ITEM_KEEPER.remove(event.getOriginal().getUUID());
+        if (keptItems != null) {
+            for (ItemStack stack : keptItems) {
+                event.getEntity().getInventory().add(stack);
+            }
+        }
+    }
 
-    // --- onPlayerTickから分離された、怠惰専用の処理メソッド ---
+    /**
+     * 任務：エンティティがジャンプしようとする瞬間の処理
+     */
+    @SubscribeEvent
+    public static void onPlayerJump(LivingEvent.LivingJumpEvent event) {
+        // クライアント・サーバー両方で処理を実行する
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        Map<Item, Integer> inventoryCounts = BuffItemUtils.countAllItemsInInventory(player);
+        int curseCount = inventoryCounts.getOrDefault(ModItems.FORBIDDEN_EARTHBOUND_CURSE.get(), 0);
+
+        if (curseCount > 0) {
+            EarthboundCurseAbility.suppressJump(player);
+        }
+    }
+
     private static void handleSloth(Player player, int baseSlothCount, int prideMultiplier) {
         UUID playerUUID = player.getUUID();
         Vec3 currentPos = player.position();
@@ -683,9 +763,6 @@ public class ModEvents {
         PLAYER_LAST_POSITION.put(playerUUID, currentPos);
     }
 
-    /**
-     * 不死鳥の羽のデバフを管理するヘルパーメソッド
-     */
     private static void handlePhoenixFeatherDebuff(Player player) {
         if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) return;
 

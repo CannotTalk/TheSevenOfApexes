@@ -2,6 +2,7 @@
 
 package net.ardcameg.thesevenofapexes.util;
 
+import net.ardcameg.thesevenofapexes.item.ForbiddenItem;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -83,6 +84,9 @@ public final class PackLootManager {
     /**
      * 指定されたリストからランダムなアイテムを1つプレイヤーに与える
      */
+    /**
+     * 指定されたリストからランダムなアイテムを1つプレイヤーに与える
+     */
     private static void giveRandomItem(Player player, List<Item> itemList) {
         if (itemList.isEmpty()) {
             player.level().playSound(null, player.blockPosition(), SoundEvents.CHEST_CLOSE, SoundSource.PLAYERS, 0.5f, 1.5f);
@@ -94,6 +98,45 @@ public final class PackLootManager {
         if (!player.getInventory().add(itemStack)) {
             player.drop(itemStack, false);
         }
-        player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5f, 1.0f);
+    }
+
+    /**
+     * パンドラの箱を開封する
+     */
+    public static void openPandorasBox(Player player) {
+        // 1. プレイヤーが所持する禁忌級アイテムの数を数える
+        int forbiddenItemCount = 0;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            if (player.getInventory().getItem(i).getItem() instanceof ForbiddenItem) {
+                forbiddenItemCount++;
+            }
+        }
+        // カーソル持ちもチェック
+        if (player.containerMenu.getCarried().getItem() instanceof ForbiddenItem) {
+            forbiddenItemCount++;
+        }
+
+        // 2. 禁忌級アイテムが出る確率を計算
+        // 基本確率55%から、所持数 * 5% を引く
+        double forbiddenChance = 0.55 - (forbiddenItemCount * 0.05);
+        // 確率が0%未満にならないように制御
+        forbiddenChance = Math.max(0.0, forbiddenChance);
+
+        // 3. 運命の抽選
+        if (RANDOM.nextDouble() < forbiddenChance) {
+            // --- 地獄：禁忌級アイテムを排出 ---
+            giveRandomItem(player, ModLootTables.getForbiddenItems());
+            player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.5f);
+        } else {
+            // --- 天国：高レアリティアイテムを排出 ---
+            // 5%の確率で伝説級、95%で英雄級
+            if (RANDOM.nextDouble() < 0.05) {
+                giveRandomItem(player, ModLootTables.getLegendaryItems());
+                player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 0.5f);
+            } else {
+                giveRandomItem(player, ModLootTables.getEpicItems());
+                player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.0f);
+            }
+        }
     }
 }

@@ -5,6 +5,8 @@ import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Random;
@@ -22,19 +24,23 @@ public final class SteelClawsAbility {
         int finalCount = clawCount * prideMultiplier;
         float procChanceBase = Config.steelClawsProcChanceBase.get().floatValue();
         float selfKillChance = Config.steelClawsSelfKillChance.get().floatValue();
-
-        // --- 1. 発動確率を計算 ---
         float procChance = procChanceBase + (finalCount - 1) * (procChanceBase / 2);
+        float bossDamageRatio = Config.steelClawsBossDamageRatio.get().floatValue();
 
         if (RANDOM.nextFloat() < procChance) {
-            // --- 2. 確率で自爆するか判定 ---
             if (RANDOM.nextFloat() < selfKillChance) {
-                // 自分を即死させる
-                player.kill();
+                player.kill(); // 自爆はkill()で問題ない
                 player.sendSystemMessage(Component.translatable("message.seven_apexes.claws_activate"));
             } else {
-                // ターゲットを即死させる
-                target.kill();
+                // ターゲットがボスかどうかを判定
+                if (target instanceof EnderDragon || target instanceof WitherBoss) {
+                    // ボスの場合、最大HPの25%ダメージ
+                    float bossDamage = target.getMaxHealth() * bossDamageRatio * finalCount;
+                    target.hurt(player.damageSources().playerAttack(player), bossDamage);
+                } else {
+                    // ボス以外の場合、即死級の大ダメージを与える
+                    target.hurt(player.damageSources().playerAttack(player), Float.MAX_VALUE);
+                }
                 player.sendSystemMessage(Component.translatable("message.seven_apexes.claws_activate"));
                 BuffItemUtils.playTotemAnimation(player, ModItems.EPIC_STEEL_CLAWS.get());
             }

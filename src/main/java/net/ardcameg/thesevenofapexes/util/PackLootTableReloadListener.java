@@ -45,6 +45,7 @@ public class PackLootTableReloadListener extends SimpleJsonResourceReloadListene
                     case "rare" -> ModLootTables.setRareItems(items);
                     case "epic" -> ModLootTables.setEpicItems(items);
                     case "legendary" -> ModLootTables.setLegendaryItems(items);
+                    case "forbidden" -> ModLootTables.setForbiddenItems(items);
                     default -> LOGGER.warn("Unknown pack loot table rarity: {}", rarity);
                 }
             } catch (Exception e) {
