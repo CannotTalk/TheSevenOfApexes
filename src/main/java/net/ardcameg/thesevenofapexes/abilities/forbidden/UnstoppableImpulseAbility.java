@@ -36,10 +36,7 @@ public final class UnstoppableImpulseAbility {
                 return;
             }
         } else {
-            if (currentState != ClientTimerData.TimerState.INACTIVE
-                    && !(player.isCreative() || player.isSpectator())) {
-                clear(player);
-            }
+            clear(player);
             return;
         }
 
@@ -65,7 +62,7 @@ public final class UnstoppableImpulseAbility {
             }
         } else if (currentState == ClientTimerData.TimerState.PAUSED) {
             checkForReactivation(player);
-            return; // PAUSED状態では、以下のsyncは不要
+            return;
         }
 
         sync(player);
