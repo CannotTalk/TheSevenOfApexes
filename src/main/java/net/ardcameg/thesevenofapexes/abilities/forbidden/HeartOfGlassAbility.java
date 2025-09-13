@@ -12,24 +12,33 @@ public final class HeartOfGlassAbility {
 
     private static final ResourceLocation HEALTH_OVERRIDE_ID = ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "heart_of_glass_override");
 
-    public static void updateEffect(Player player, int itemCount) {
+    public static void updateEffect(Player player, int itemCount, boolean reversed) {
         AttributeInstance healthAttribute = player.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttribute == null) return;
 
         healthAttribute.removeModifier(HEALTH_OVERRIDE_ID);
 
         if (itemCount > 0) {
-            // 現在の最大HPを取得し、それを打ち消す負の値を計算
-            double currentMaxHealth = healthAttribute.getValue();
-            // HPを1にするための減算値
-            double healthToSet = 1.0 - currentMaxHealth;
+            if(!reversed) {
+                // 現在の最大HPを取得し、それを打ち消す負の値を計算
+                double currentMaxHealth = healthAttribute.getValue();
+                // HPを1にするための減算値
+                double healthToSet = 1.0 - currentMaxHealth;
 
-            AttributeModifier healthOverride = new AttributeModifier(
-                    HEALTH_OVERRIDE_ID,
-                    healthToSet,
-                    AttributeModifier.Operation.ADD_VALUE
-            );
-            healthAttribute.addPermanentModifier(healthOverride);
+                AttributeModifier healthOverride = new AttributeModifier(
+                        HEALTH_OVERRIDE_ID,
+                        healthToSet,
+                        AttributeModifier.Operation.ADD_VALUE
+                );
+                healthAttribute.addPermanentModifier(healthOverride);
+            }else {
+                AttributeModifier healthOverride = new AttributeModifier(
+                        HEALTH_OVERRIDE_ID,
+                        1.0,
+                        AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                );
+                healthAttribute.addPermanentModifier(healthOverride);
+            }
         }
     }
 }

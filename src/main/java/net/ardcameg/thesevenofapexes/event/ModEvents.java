@@ -8,7 +8,7 @@ import net.ardcameg.thesevenofapexes.abilities.rare.*;
 import net.ardcameg.thesevenofapexes.abilities.uncommon.*;
 import net.ardcameg.thesevenofapexes.abilities.common.*;
 import net.ardcameg.thesevenofapexes.abilities.block.*;
-import net.ardcameg.thesevenofapexes.abilities.util.StunAbility;
+import net.ardcameg.thesevenofapexes.abilities.util.*;
 import net.ardcameg.thesevenofapexes.block.*;
 import net.ardcameg.thesevenofapexes.item.*;
 import net.ardcameg.thesevenofapexes.item.ModItems;
@@ -68,6 +68,8 @@ public class ModEvents {
     private static final Set<UUID> CRITICAL_HIT_FLAG = new HashSet<>();
     private static final Map<UUID, List<ItemStack>> FORBIDDEN_ITEM_KEEPER = new HashMap<>();
     private static final Map<UUID, Integer> VOID_STANDING_TICKS = new HashMap<>();
+
+    public static boolean reverseForbidden = false;
 
     /**
      * 任務1：プレイヤーがダメージを受けた"後"の処理
@@ -139,14 +141,21 @@ public class ModEvents {
         }
 
         if (target instanceof ServerPlayer player) {
+
+            // 避けようがないダメージならリターン
+            if(event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) return;
+
             Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-            if (baseCounts.isEmpty()) return;
+            Map<Item, Integer> forbiddenCounts = BuffItemUtils.countAllItemsInInventory(player);
+
+            reverseForbidden = baseCounts.getOrDefault(ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get(), 0) > 0;
+
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
             int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
             if (bargeCount > 0) {
-                if (player.getHealth() - event.getNewDamage() <= 0 && !event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+                if (player.getHealth() - event.getNewDamage() <= 0) {
                     event.setNewDamage(0f);
                     FerrymansBargeAbility.startFerry(player, bargeCount, prideMultiplier);
                     return;
@@ -161,6 +170,12 @@ public class ModEvents {
                         return;
                     }
                 }
+            }
+
+            int earthBoundCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_EARTHBOUND_CURSE.get(), 0);
+            if(earthBoundCount > 0 && reverseForbidden){
+                EarthboundCurseAbility.onPlayerDamaged(event, player);
+                return;
             }
         }
     }
@@ -177,30 +192,32 @@ public class ModEvents {
             return;
         }
 
-        DeathsPremonitionAbility.update(serverPlayer);
-        UnstoppableImpulseAbility.update(serverPlayer);
-        PactOfDecayAbility.update(serverPlayer);
-        WhispersOfTheVoidAbility.update(serverPlayer);
+        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
+        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
+        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-        // 2. その他の禁忌級アイテムの効果を適用
         Map<Item, Integer> forbiddenCounts = BuffItemUtils.countAllItemsInInventory(player);
 
+        reverseForbidden = ReversalArtifactAbility.checkForbiddenReversed(player);
+
+        DeathsPremonitionAbility.update(serverPlayer, reverseForbidden);
+        UnstoppableImpulseAbility.update(serverPlayer, reverseForbidden);
+        PactOfDecayAbility.update(serverPlayer, reverseForbidden);
+        WhispersOfTheVoidAbility.update(serverPlayer, reverseForbidden);
+        HeartOfAbyssAbility.update(serverPlayer);
+        PurificationAbility.updateSurvivalTrial(serverPlayer);
+
         int heartOfGlassCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_HEART_OF_GLASS.get(), 0);
-        HeartOfGlassAbility.updateEffect(player, heartOfGlassCount);
+        HeartOfGlassAbility.updateEffect(player, heartOfGlassCount, reverseForbidden);
 
         if (player.level().getGameTime() % 20 == 0) {
             int beaconCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_TAUNTING_BEACON.get(), 0);
             if (!(player.isCreative() || player.isSpectator()) && beaconCount > 0) {
-                TauntingBeaconAbility.applyAura(serverPlayer);
+                TauntingBeaconAbility.applyAura(serverPlayer, reverseForbidden);
             }
         }
 
         int whispersCount = forbiddenCounts.getOrDefault(ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID.get(), 0);
-
-
-        Map<Item, Integer> baseCounts = BuffItemUtils.countAllItemsInBuffRow(player);
-        int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
-        int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
         if (handleFerrymansBargeTimer(serverPlayer)) {
             return;
@@ -335,14 +352,17 @@ public class ModEvents {
             List<ItemStack> itemsToKeep = new ArrayList<>();
             // Iteratorを使って安全にリストから要素を削除する
             Iterator<ItemEntity> iterator = event.getDrops().iterator();
+
             while (iterator.hasNext()) {
                 ItemEntity drop = iterator.next();
                 ItemStack stack = drop.getItem();
 
                 // ドロップ品がForbiddenItemかどうかをチェック
                 if (stack.getItem() instanceof ForbiddenItem) {
-                    itemsToKeep.add(stack.copy()); // 退避リストに追加
-                    iterator.remove(); // ドロップ品リストから削除
+                        if(!(stack.getItem() == ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get()
+                                || stack.getItem() == ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get()))
+                        itemsToKeep.add(stack.copy()); // 退避リストに追加
+                        iterator.remove(); // ドロップ品リストから削除
                 }
             }
 
@@ -487,8 +507,12 @@ public class ModEvents {
         // キルによるリセット」のロジックを、正しい形で復活させる
         if (!(event.getEntity() instanceof Player)
                 && event.getSource().getEntity() instanceof ServerPlayer attacker) {
-            if (BuffItemUtils.countAllItemsForPlayer(attacker, ModItems.FORBIDDEN_UNSTOPPABLE_IMPULSE.get()) > 0) {
-                UnstoppableImpulseAbility.onKill(attacker);
+
+            reverseForbidden = ReversalArtifactAbility.checkForbiddenReversed(attacker);
+
+            int impulseCount = BuffItemUtils.countAllItemsForPlayer(attacker, ModItems.FORBIDDEN_UNSTOPPABLE_IMPULSE.get());
+            if (impulseCount > 0) {
+                UnstoppableImpulseAbility.onKill(attacker, reverseForbidden);
             }
         }
 
@@ -498,6 +522,9 @@ public class ModEvents {
         if (event.isCanceled()) {
             return;
         }
+
+        // 死亡時に生存の試練をリセット
+        PurificationAbility.resetSurvivalTrial(player);
     }
 
     /**
@@ -651,17 +678,14 @@ public class ModEvents {
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
 
-        if(!(player.isShiftKeyDown())) {
-            if (level.getBlockState(pos).is(ModBlocks.ALTAR_OF_BANISHMENT.get())) {
-                // サーバーサイドでのみ、儀式のロジックを実行
-                if (!level.isClientSide) {
-                    PurificationAbility.performRitual((ServerPlayer) player);
-                }
-                // このインタラクションは成功した(SUCCESS)とマークし、これ以降の全ての右クリック処理（アイテムのuseメソッド呼び出しなど）を完全にキャンセルする
-                event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
-                return;
+        if (level.getBlockState(pos).is(ModBlocks.ALTAR_OF_BANISHMENT.get())) {
+            if (!level.isClientSide) {
+                PurificationAbility.performRitual((ServerPlayer) player);
             }
+            // このインタラクションは成功した(SUCCESS)とマークし、後続の処理を完全にキャンセルする
+            event.setCancellationResult(InteractionResult.SUCCESS);
+            event.setCanceled(true);
+            return;
         }
 
         if (level.isClientSide) return;
@@ -744,11 +768,13 @@ public class ModEvents {
             return;
         }
 
+        reverseForbidden = BuffItemUtils.countItemInBuffRow(player, ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get()) > 0;
+
         Map<Item, Integer> inventoryCounts = BuffItemUtils.countAllItemsInInventory(player);
         int curseCount = inventoryCounts.getOrDefault(ModItems.FORBIDDEN_EARTHBOUND_CURSE.get(), 0);
 
         if (curseCount > 0) {
-            EarthboundCurseAbility.suppressJump(player);
+            EarthboundCurseAbility.suppressJump(player, curseCount,reverseForbidden);
         }
     }
 

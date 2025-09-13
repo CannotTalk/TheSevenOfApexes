@@ -56,12 +56,12 @@ public final class VoidMantleAbility {
             hideEquipment(player);
 
             float consumeIntervalTicks = Config.voidMantleConsumeIntervalTicks.getAsInt();
-            float consumePoint = Config.voidMantleConsumeHungerPoint.get().floatValue();
+            int consumePoint = Config.voidMantleConsumeHungerPoint.get();
 
             // 2. 満腹度消費
             if (player.level().getGameTime() % consumeIntervalTicks == 0) {
                 if (player.getFoodData().getFoodLevel() > 0) {
-                    player.getFoodData().addExhaustion(consumePoint);
+                    player.getFoodData().setFoodLevel(player.getFoodData().getFoodLevel() - consumePoint);
                 } else {
                     unvanish(player);
                 }

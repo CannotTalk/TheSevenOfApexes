@@ -1,0 +1,20 @@
+{
+  "parent": "seven_apexes:main/the_first_sin",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:pandoras_box"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.hope_or_despair.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.hope_or_despair.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

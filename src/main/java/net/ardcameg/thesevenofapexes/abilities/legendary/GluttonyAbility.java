@@ -88,6 +88,7 @@ public class GluttonyAbility {
         Vec3 traceEnd = eyePosition.add(lookVector.x * 5, lookVector.y * 5, lookVector.z * 5);
         return player.level().clip(new ClipContext(eyePosition, traceEnd, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
+
     // Add: Some blocks to increase the gauge for “Gluttony.”
     private static int getGaugeValueForBlock(Block block) {
         if (block.equals(Blocks.DIRT) || block.equals(Blocks.GRASS_BLOCK) ||block.equals(Blocks.SAND) || block.equals(Blocks.GRAVEL))

@@ -32,7 +32,6 @@ public class ClientTimerData {
         }
     }
 
-    // クライアントサイドでのカウントダウン処理を復活
     public static void tick() {
         for (TimerInfo timer : activeTimers.values()) {
             if (timer.timerState == TimerState.COUNTING.ordinal() && timer.ticksLeft > 0) {

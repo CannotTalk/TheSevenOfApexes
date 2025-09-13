@@ -1,5 +1,3 @@
-// net/ardcameg/thesevenofapexes/util/PackLootManager.java
-
 package net.ardcameg.thesevenofapexes.util;
 
 import net.ardcameg.thesevenofapexes.item.ForbiddenItem;
@@ -58,7 +56,7 @@ public final class PackLootManager {
      */
     public static void openEpicPack(Player player) {
         double specialPackRoll = RANDOM.nextDouble();
-        if (specialPackRoll < 0.025) {
+        if (specialPackRoll < 0.01) {
             giveRandomItem(player, List.of(ModItems.LEGENDARY_PACK.get()));
         } else {
             giveRandomItem(player, ModLootTables.getEpicItems());
@@ -113,8 +111,12 @@ public final class PackLootManager {
             player.level().playSound(null, player.blockPosition(), SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 0.7f, 1.5f);
         } else {
             // --- 高レアリティアイテムを排出 ---
-            // 5%の確率で伝説級、95%で英雄級
-            if (RANDOM.nextDouble() < 0.05) {
+            // 0.5%の確率で深淵の心臓、残りの99.5%の中で10%の確率で伝説級...
+            double highTierRoll = RANDOM.nextDouble();
+            if (highTierRoll < 0.005) { // 0.5%
+                giveRandomItem(player, List.of(ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get()));
+                player.level().playSound(null, player.blockPosition(), SoundEvents.ENDER_DRAGON_DEATH, SoundSource.PLAYERS, 1.0f, 0.5f);
+            } else if (highTierRoll < 0.005 + (0.995 * 0.1)) { // ~10.4%
                 giveRandomItem(player, ModLootTables.getLegendaryItems());
                 player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 0.5f);
             } else {

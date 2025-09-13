@@ -1,0 +1,23 @@
+{
+  "parent": "seven_apexes:main/seeker_of_the_abyss",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:forbidden_reversal_artifact"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.transcender_of_logic.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.transcender_of_logic.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

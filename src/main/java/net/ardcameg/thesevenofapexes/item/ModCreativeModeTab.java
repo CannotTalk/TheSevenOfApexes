@@ -84,6 +84,8 @@ public class ModCreativeModeTab {
                         output.accept(ModItems.FORBIDDEN_ENDLESS_INSOMNIA);
                         output.accept(ModItems.FORBIDDEN_PACT_OF_DECAY);
                         output.accept(ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID);
+                        output.accept(ModItems.FORBIDDEN_HEART_OF_THE_ABYSS);
+                        output.accept(ModItems.FORBIDDEN_REVERSAL_ARTIFACT);
 
 
                         output.accept(ModItems.RANDOM_PACK);

@@ -1,0 +1,20 @@
+{
+  "parent": "seven_apexes:main/root",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:common_fragile_soul"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.the_first_sin.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.the_first_sin.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

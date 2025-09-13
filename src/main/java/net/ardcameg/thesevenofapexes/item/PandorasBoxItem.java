@@ -1,5 +1,7 @@
 package net.ardcameg.thesevenofapexes.item;
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.ardcameg.thesevenofapexes.util.PackLootManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,6 +23,7 @@ public class PandorasBoxItem extends Item {
 
             if (!player.getAbilities().instabuild) {
                 itemStack.shrink(1);
+                AdvancementTriggers.grantAdvancement((ServerPlayer) player, "hope_or_despair");
             }
         }
 

@@ -22,11 +22,10 @@ public class ModBlocks {
             DeferredRegister.createBlocks(TheSevenOfApexes.MOD_ID);
 
     public static final DeferredBlock<Block> ALTAR_OF_BANISHMENT = registerBlock("altar_of_banishment",
-            () -> new Block(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .instrument(NoteBlockInstrument.BELL)
-                    .strength(10.0F, 1200.0F)
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN) // 黒曜石の性質をコピー
+                    .strength(50.0F, 1200.0F)
                     .sound(SoundType.AMETHYST_CLUSTER)
+                    .lightLevel(state -> 7)
             )
     );
 

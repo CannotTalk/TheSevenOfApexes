@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.client;
 
+import net.ardcameg.thesevenofapexes.abilities.block.PurificationAbility;
 import net.ardcameg.thesevenofapexes.abilities.forbidden.PactOfDecayAbility;
 import net.ardcameg.thesevenofapexes.abilities.forbidden.UnstoppableImpulseAbility;
 import net.ardcameg.thesevenofapexes.abilities.forbidden.WhispersOfTheVoidAbility;
@@ -53,6 +54,7 @@ public class HudManager {
             case PactOfDecayAbility.ID -> new RenderInfo(new Color(80, 220, 80), ModItems.FORBIDDEN_PACT_OF_DECAY.get(), false);
             case WhispersOfTheVoidAbility.ID -> new RenderInfo(new Color(80, 80, 200), ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID.get(), true);
             case WhispersOfTheVoidAbility.GRACE_ID -> new RenderInfo(new Color(255, 255, 100), ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID.get(), false);
+            case PurificationAbility.SURVIVAL_TRIAL_ID -> new RenderInfo(new Color(255, 120, 0), ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get(), true);
             default -> new RenderInfo(Color.WHITE, Items.AIR, false);
         };
     }

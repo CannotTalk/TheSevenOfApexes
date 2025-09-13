@@ -7,10 +7,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(TheSevenOfApexes.MOD_ID);
 
@@ -246,7 +242,14 @@ public class ModItems {
             () -> new ForbiddenItem(new Item.Properties()
                     .stacksTo(1)));
     public static final DeferredItem<Item> FORBIDDEN_WHISPERS_OF_THE_VOID = ITEMS.register("forbidden_whispers_of_the_void",
-            () -> new ForbiddenItem(new Item.Properties().stacksTo(1)));
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_HEART_OF_THE_ABYSS = ITEMS.register("forbidden_heart_of_the_abyss",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
+    public static final DeferredItem<Item> FORBIDDEN_REVERSAL_ARTIFACT = ITEMS.register("forbidden_reversal_artifact",
+            () -> new ForbiddenItem(new Item.Properties()
+                    .stacksTo(1)));
 
 
     // --- パックアイテム ---

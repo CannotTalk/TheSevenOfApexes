@@ -1,6 +1,5 @@
 package net.ardcameg.thesevenofapexes;
 
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,7 +183,7 @@ public class Config {
                 .defineInRange("voidMantleConsumeInterval", 40, 0, 1200);
         voidMantleConsumeHungerPoint = BUILDER
                 .comment("The amount of hunger (in points) consumed at each interval.")
-                .defineInRange("voidMantleConsumePoint", 4.0, 1.0, 40.0);
+                .defineInRange("voidMantleConsumePoint", 4, 0, 20);
 
         steelClawsProcChanceBase = BUILDER
                 .comment("Base chance for Claws of Steel to activate on hit (for the first item).")
@@ -259,7 +258,7 @@ public class Config {
     public static final ModConfigSpec.DoubleValue scarredGrailExplodeChance;
     public static final ModConfigSpec.DoubleValue voidMantleVanishChance;
     public static final ModConfigSpec.IntValue voidMantleConsumeIntervalTicks;
-    public static final ModConfigSpec.DoubleValue voidMantleConsumeHungerPoint;
+    public static final ModConfigSpec.IntValue voidMantleConsumeHungerPoint;
     public static final ModConfigSpec.DoubleValue steelClawsProcChanceBase;
     public static final ModConfigSpec.DoubleValue steelClawsSelfKillChance;
     public static final ModConfigSpec.DoubleValue steelClawsBossDamageRatio;
@@ -430,6 +429,24 @@ public class Config {
                 .comment("The grace period in ticks after respawning during which Whispers of the Void is inactive.")
                 .defineInRange("whispersOfTheVoidGracePeriodTicks", 300, 0, 1200);
 
+        heartOfAbyssFirstRequire = BUILDER
+                .comment("The number of forbidden rarity items required for “Heart of the Abyss” to grant its 1st buff")
+                .defineInRange("heartOfAbyssFirstRequire", 1, 0, 64);
+        heartOfAbyssSecondRequire = BUILDER
+                .comment("The number of forbidden rarity items required for “Heart of the Abyss” to grant its 2nd buff")
+                .defineInRange("heartOfAbyssSecondRequire", 3, 0, 64);
+        heartOfAbyssThirdRequire = BUILDER
+                .comment("The number of forbidden rarity items required for “Heart of the Abyss” to grant its 3rd buff")
+                .defineInRange("heartOfAbyssThirdRequire", 6, 0, 64);
+
+        ultimateArtifactThreshold = BUILDER
+                .comment("Number of unique forbidden items a player must have held simultaneously to qualify for an ultimate artifact.")
+                .defineInRange("ultimateArtifactThreshold", 5, 2, 10);
+
+        finalTrialDurationTicks = BUILDER
+                .comment("The duration in ticks a player must survive while holding all forbidden items to re-qualify for an ultimate artifact.")
+                .defineInRange("finalTrialDurationTicks", 24000, 1200, 72000); // Default: 20 minutes (1 day)
+
         BUILDER.pop();
     }
 
@@ -439,6 +456,11 @@ public class Config {
     public static final ModConfigSpec.IntValue pactOfDecayIntervalTicks;
     public static final ModConfigSpec.IntValue whispersOfTheVoidRequiredTicks;
     public static final ModConfigSpec.IntValue whispersOfTheVoidGracePeriodTicks;
+    public static final ModConfigSpec.IntValue heartOfAbyssFirstRequire;
+    public static final ModConfigSpec.IntValue heartOfAbyssSecondRequire;
+    public static final ModConfigSpec.IntValue heartOfAbyssThirdRequire;
+    public static final ModConfigSpec.IntValue ultimateArtifactThreshold;
+    public static final ModConfigSpec.IntValue finalTrialDurationTicks;
 
     static final ModConfigSpec SPEC = BUILDER.build();
 }

@@ -12,7 +12,6 @@ public final class PearlEyeAbility {
      */
     public static void reduceEnderPearlDamage(LivingDamageEvent.Pre event, int eyeCount, int prideMultiplier) {
         // --- 1. このダメージが、エンダーパールによるものか判定する ---
-        // is(DamageTypes.FALL) は、エンダーパールのテレポートダメージの正しい型です
         if (!event.getSource().is(DamageTypes.FALL)) {
             return;
         }

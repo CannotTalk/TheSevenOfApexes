@@ -6,7 +6,10 @@
     "AbstractContainerMenuMixin",
     "CommonHooksMixin",
     "LocalPlayerMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "WitherBossMixin",
+    "EnderDragonMixin",
+    "EndCrystalMixin"
   ],
   "client": [
   ],

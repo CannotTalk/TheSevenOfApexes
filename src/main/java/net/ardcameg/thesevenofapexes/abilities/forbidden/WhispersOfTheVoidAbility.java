@@ -1,12 +1,15 @@
 package net.ardcameg.thesevenofapexes.abilities.forbidden;
 
 import net.ardcameg.thesevenofapexes.Config;
+import net.ardcameg.thesevenofapexes.abilities.legendary.GluttonyAbility;
+import net.ardcameg.thesevenofapexes.abilities.legendary.SlothAbility;
 import net.ardcameg.thesevenofapexes.client.ClientTimerData;
 import net.ardcameg.thesevenofapexes.event.ModEvents;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
 import net.ardcameg.thesevenofapexes.networking.packet.TimerSyncS2CPacket;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
+import net.ardcameg.thesevenofapexes.util.PackLootManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +20,7 @@ public final class WhispersOfTheVoidAbility {
     private static final String GAUGE_TAG = ID + "_gauge";
     private static final String GRACE_TIMER_TAG = GRACE_ID + "_timer";
 
-    public static void update(ServerPlayer player) {
+    public static void update(ServerPlayer player, boolean reversed) {
         if (!player.isAlive()) return;
         if (BuffItemUtils.countAllItemsForPlayer(player, ModItems.FORBIDDEN_WHISPERS_OF_THE_VOID.get()) <= 0) {
             if (player.getPersistentData().contains(GAUGE_TAG) || player.getPersistentData().contains(GRACE_TIMER_TAG)) {
@@ -51,7 +54,12 @@ public final class WhispersOfTheVoidAbility {
             int currentGauge = data.getInt(GAUGE_TAG) + 1;
             int requiredGauge = Config.whispersOfTheVoidRequiredTicks.get();
             if (currentGauge >= requiredGauge) {
-                player.kill();
+                if (!reversed) {
+                    player.kill();
+                }else {
+                    SlothAbility.apply(player, 1, 1);
+                }
+
                 reset(player);
             } else {
                 data.putInt(GAUGE_TAG, currentGauge);

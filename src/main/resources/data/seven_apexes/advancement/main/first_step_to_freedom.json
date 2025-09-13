@@ -1,0 +1,20 @@
+{
+  "parent": "seven_apexes:main/hope_or_despair",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:altar_of_banishment"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.first_step_to_freedom.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.first_step_to_freedom.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

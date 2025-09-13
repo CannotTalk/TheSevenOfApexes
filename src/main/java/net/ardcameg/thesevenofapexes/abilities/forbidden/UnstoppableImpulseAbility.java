@@ -6,15 +6,21 @@ import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.networking.ModMessages;
 import net.ardcameg.thesevenofapexes.networking.packet.TimerSyncS2CPacket;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+import java.util.Random;
 
 public final class UnstoppableImpulseAbility {
     public static final String ID = "unstoppable_impulse";
@@ -24,7 +30,9 @@ public final class UnstoppableImpulseAbility {
     private static final int ANIM_DURATION_START = 20;
     private static final int ANIM_DURATION_RESET = 10;
 
-    public static void update(ServerPlayer player) {
+    public static final Random RANDOM = new Random();
+
+    public static void update(ServerPlayer player, boolean reversed) {
         if (!player.isAlive()) return;
         int itemCount = BuffItemUtils.countAllItemsForPlayer(player, ModItems.FORBIDDEN_UNSTOPPABLE_IMPULSE.get());
         CompoundTag data = player.getPersistentData();
@@ -57,7 +65,7 @@ public final class UnstoppableImpulseAbility {
             if (ticksLeft > 0) {
                 data.putInt(TIMER_TAG, ticksLeft - 1);
             } else {
-                explode(player);
+                explode(player, reversed);
                 return;
             }
         } else if (currentState == ClientTimerData.TimerState.PAUSED) {
@@ -70,18 +78,25 @@ public final class UnstoppableImpulseAbility {
     }
 
     // このメソッドは「Mobをキルした時」専用
-    public static void onKill(ServerPlayer player) {
+    public static void onKill(ServerPlayer player, boolean reversed) {
         CompoundTag data = player.getPersistentData();
         if (!data.contains(STATE_TAG)) return;
         ClientTimerData.TimerState currentState = ClientTimerData.TimerState.values()[data.getInt(STATE_TAG)];
         if (currentState == ClientTimerData.TimerState.COUNTING) {
 
             int ticksLeft = data.getInt(TIMER_TAG);
-            int shortResetTicks = Config.unstoppableImpulseShortResetTicks.get();
-            if(ticksLeft < shortResetTicks) {
-                data.putInt(STATE_TAG, ClientTimerData.TimerState.ANIMATING_RESET.ordinal());
-                data.putInt(ANIMATION_TICKS_TAG, ANIM_DURATION_RESET);
-                sync(player);
+            if(!reversed) {
+                int shortResetTicks = Config.unstoppableImpulseShortResetTicks.get();
+                if (ticksLeft < shortResetTicks) {
+                    data.putInt(STATE_TAG, ClientTimerData.TimerState.ANIMATING_RESET.ordinal());
+                    data.putInt(ANIMATION_TICKS_TAG, ANIM_DURATION_RESET);
+                    sync(player);
+                }
+            }else {
+                int reduceSecs = Math.abs(RANDOM.nextInt() % 4) + 1;
+                int reduceTicks = reduceSecs * 20;
+                int newTicksLeft = Math.max(0, ticksLeft - reduceTicks);
+                data.putInt(TIMER_TAG, newTicksLeft);
             }
         }
     }
@@ -116,10 +131,29 @@ public final class UnstoppableImpulseAbility {
         }
     }
 
-    private static void explode(ServerPlayer player) {
+    private static void explode(ServerPlayer player, boolean reversed) {
         Level level = player.level();
+
         float power = Config.unstoppableImpulseExplosionPower.get().floatValue();
-        level.explode(null, player.getX(), player.getY(), player.getZ(), power, Level.ExplosionInteraction.BLOCK);
+        if (!reversed) {
+            level.explode(null, player.getX(), player.getY(), player.getZ(), power, Level.ExplosionInteraction.BLOCK);
+        }else {
+            AABB searchArea = player.getBoundingBox().inflate(power);
+            List<LivingEntity> targets = player.level().getEntitiesOfClass(LivingEntity.class, searchArea, entity ->
+                    entity instanceof LivingEntity && (entity != player)
+            );
+            if(!targets.isEmpty()) {
+                LightningBolt visualLightning = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+                visualLightning.setVisualOnly(true);
+                visualLightning.setPos(player.position());
+                level.addFreshEntity(visualLightning);
+
+                for (LivingEntity target : targets) {
+                    target.hurt(player.damageSources().magic(), (float) Math.pow(power, 2));
+                }
+            }
+        }
+
         clear(player);
     }
 

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "id": "seven_apexes:legendary_pride"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.root.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.root.description"
+    },
+    "background": "minecraft:textures/block/magenta_glazed_terracotta.png",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "get_any_artifact": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#seven_apexes:artifacts"
+          }
+        ]
+      }
+    }
+  }
+}

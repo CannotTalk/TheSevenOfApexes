@@ -1,0 +1,20 @@
+{
+  "parent": "seven_apexes:main/the_first_sin",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:forbidden_heart_of_glass"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.the_cursed_one.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.the_cursed_one.description"
+    },
+    "frame": "task"
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

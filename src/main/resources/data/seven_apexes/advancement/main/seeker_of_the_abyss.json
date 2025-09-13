@@ -1,0 +1,23 @@
+{
+  "parent": "seven_apexes:main/the_cursed_one",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:forbidden_heart_of_the_abyss"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.seeker_of_the_abyss.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.seeker_of_the_abyss.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

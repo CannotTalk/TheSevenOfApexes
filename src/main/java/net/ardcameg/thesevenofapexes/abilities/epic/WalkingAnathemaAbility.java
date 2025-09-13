@@ -1,6 +1,7 @@
 package net.ardcameg.thesevenofapexes.abilities.epic;
 
 import net.ardcameg.thesevenofapexes.Config;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;

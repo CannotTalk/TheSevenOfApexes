@@ -1,0 +1,23 @@
+{
+  "parent": "seven_apexes:main/seeker_of_the_abyss",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:forbidden_heart_of_the_abyss"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.master_of_curses.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.master_of_curses.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

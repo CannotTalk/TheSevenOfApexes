@@ -20,17 +20,11 @@ public final class ScarredGrailAbility {
     private static final Random RANDOM = new Random();
 
     public static void onPlayerDamaged(LivingDamageEvent.Pre event, Player player) {
-        // ダメージソースが「無敵貫通」属性を持っている場合（/killなど）、
-        // 聖杯は何もしないで、そのままダメージを受け入れる。
-        if (event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return;
-        }
-
         List<ItemStack> grails = findGrails(player);
         if (grails.isEmpty()) return;
 
         float originalDamage = event.getNewDamage();
-        event.setNewDamage(0);
+        event.setNewDamage(0.0f);
 
         storeDamageInGrails(grails, originalDamage);
         player.level().playSound(null, player.blockPosition(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.5f, 1.5f);

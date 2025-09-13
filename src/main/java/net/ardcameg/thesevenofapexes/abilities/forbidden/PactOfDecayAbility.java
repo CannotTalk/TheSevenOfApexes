@@ -17,10 +17,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 public final class PactOfDecayAbility {
     public static final String ID = "pact_of_decay";
     private static final String TIMER_TAG = ID + "_timer";
-    private static final String HEALTH_LOSS_TAG = ID + "_health_loss";
+    private static final String HEALTH_MODIFIER_TAG = ID + "_health_modifier";
     private static final ResourceLocation HEALTH_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, ID);
 
-    public static void update(ServerPlayer player) {
+    public static void update(ServerPlayer player, boolean reversed) {
         if (!player.isAlive()) {
             return;
         }
@@ -36,21 +36,32 @@ public final class PactOfDecayAbility {
         CompoundTag data = player.getPersistentData();
         if (!data.contains(TIMER_TAG)) {
             data.putInt(TIMER_TAG, Config.pactOfDecayIntervalTicks.get());
-            data.putInt(HEALTH_LOSS_TAG, 0);
+            data.putInt(HEALTH_MODIFIER_TAG, 0);
         }
 
         int ticksLeft = data.getInt(TIMER_TAG);
         if (ticksLeft <= 0) {
-            if (player.getMaxHealth() > 1.0f) {
-                if(player.getRandom().nextBoolean()){
-                    int healthLoss = data.getInt(HEALTH_LOSS_TAG) + 1;
-                    data.putInt(HEALTH_LOSS_TAG, healthLoss);
-                    updateMaxHealth(player, healthLoss);
-                }else{
-                    player.hurt(player.damageSources().generic(), 1.0f);
+            if (!reversed) {
+                if (player.getMaxHealth() > 1.0f) {
+                    if (player.getRandom().nextBoolean()) {
+                        int healthModifier = data.getInt(HEALTH_MODIFIER_TAG) - 1;
+                        data.putInt(HEALTH_MODIFIER_TAG, healthModifier);
+                        updateMaxHealth(player, healthModifier);
+                    } else {
+                        player.hurt(player.damageSources().generic(), 1.0f);
+                    }
+                } else {
+                    player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - 4));
+                    player.getFoodData().setExhaustion(0.0f);
                 }
-            }else{
-                player.hurt(player.damageSources().generic(), 1.0F);
+            }else {
+                if (player.getRandom().nextBoolean()) {
+                    int healthModifier = data.getInt(HEALTH_MODIFIER_TAG) + 2;
+                    data.putInt(HEALTH_MODIFIER_TAG, healthModifier);
+                    updateMaxHealth(player, healthModifier);
+                } else {
+                    // Do nothing
+                }
             }
             data.putInt(TIMER_TAG, Config.pactOfDecayIntervalTicks.get());
         } else {
@@ -59,11 +70,11 @@ public final class PactOfDecayAbility {
         sync(player);
     }
 
-    private static void updateMaxHealth(ServerPlayer player, int healthLoss) {
+    private static void updateMaxHealth(ServerPlayer player, int healthModifier) {
         AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttr == null) return;
         healthAttr.removeModifier(HEALTH_MODIFIER_ID);
-        AttributeModifier modifier = new AttributeModifier(HEALTH_MODIFIER_ID, -healthLoss, AttributeModifier.Operation.ADD_VALUE);
+        AttributeModifier modifier = new AttributeModifier(HEALTH_MODIFIER_ID, healthModifier, AttributeModifier.Operation.ADD_VALUE);
         healthAttr.addPermanentModifier(modifier);
         if (player.getHealth() > player.getMaxHealth()) {
             player.setHealth(player.getMaxHealth());
@@ -73,7 +84,7 @@ public final class PactOfDecayAbility {
     private static void clear(ServerPlayer player) {
         CompoundTag data = player.getPersistentData();
         data.remove(TIMER_TAG);
-        data.remove(HEALTH_LOSS_TAG);
+        data.remove(HEALTH_MODIFIER_TAG);
         AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
         if (healthAttr != null) healthAttr.removeModifier(HEALTH_MODIFIER_ID);
         ModMessages.sendToPlayer(new TimerSyncS2CPacket(ID, 0, ClientTimerData.TimerState.INACTIVE.ordinal(), 0, 0, 0, 0), player);
