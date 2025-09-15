@@ -76,12 +76,10 @@ public class AdvancementTriggers {
             System.out.println("[TRIAL DEBUG] Player " + player.getName().getString() + " is eligible to check for trial start.");
 
             if (isReadyForSecondTrial(currentForbidden)) {
-                // このメッセージが出力されれば、全ての条件がクリアされ、試練が開始されるはずです。
+                // このメッセージが出力されれば、全ての条件がクリアされ、試練が開始される
                 System.out.println("[TRIAL DEBUG] All conditions met! Starting trial.");
 
-                int trialDuration = Config.finalTrialDurationTicks.get(); // Configから取得するように修正
-                data.putInt(PurificationAbility.SURVIVAL_TIMER_TAG, trialDuration);
-                PurificationAbility.syncSurvivalTrial(player, trialDuration);
+                PurificationAbility.startSurvivalTrial(player);
 
                 // 試練開始の進捗を付与
                 grantAdvancement(player, "trial_of_survival");
@@ -90,7 +88,7 @@ public class AdvancementTriggers {
         }
     }
 
-    private static boolean isReadyForSecondTrial(Set<Item> currentForbidden) {
+    public static boolean isReadyForSecondTrial(Set<Item> currentForbidden) {
         List<Item> excludedItems = List.of(
                 ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get(),
                 ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get(),

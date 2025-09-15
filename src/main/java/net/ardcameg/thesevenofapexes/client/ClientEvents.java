@@ -31,7 +31,9 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
 
-        ClientTimerData.tick();
+        if (mc.player.isAlive()) {
+            ClientTimerData.tick();
+        }
 
         if (KeyBinding.EAT_BLOCK_KEY.consumeClick()) {
             ModMessages.sendToServer(new EatBlockC2SPacket());

@@ -17,6 +17,7 @@ import net.ardcameg.thesevenofapexes.networking.packet.*;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.ardcameg.thesevenofapexes.util.PackLootTableReloadListener;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -444,6 +445,8 @@ public class ModEvents {
         if (event.isEndConquered()) return;
         Player player = event.getEntity();
         if(player instanceof ServerPlayer serverPlayer) { // サーバーサイドでのみ処理
+            PurificationAbility.applyPenaltyOnRespawn(serverPlayer);
+
             UnstoppableImpulseAbility.pause(serverPlayer);
             WhispersOfTheVoidAbility.pause(serverPlayer); // 猶予期間を開始させる
         }
@@ -523,8 +526,8 @@ public class ModEvents {
             return;
         }
 
-        // 死亡時に生存の試練をリセット
-        PurificationAbility.resetSurvivalTrial(player);
+        // ここではペナルティを「予約」するだけ
+        PurificationAbility.setPenaltyFlagOnDeath(player);
     }
 
     /**
@@ -679,7 +682,10 @@ public class ModEvents {
         BlockPos pos = event.getPos();
 
         if (level.getBlockState(pos).is(ModBlocks.ALTAR_OF_BANISHMENT.get())) {
-            if (!level.isClientSide) {
+
+            if(player.isShiftKeyDown()) return;
+
+            if (!level.isClientSide && !player.isShiftKeyDown()) {
                 PurificationAbility.performRitual((ServerPlayer) player);
             }
             // このインタラクションは成功した(SUCCESS)とマークし、後続の処理を完全にキャンセルする
@@ -701,7 +707,7 @@ public class ModEvents {
             int healingLinensCount = counts.getOrDefault(ModItems.UNCOMMON_HEALING_LINENS.get(), 0);
             if (healingLinensCount > 0) {
                 HealingLinensAbility.apply(player, healingLinensCount);
-                        // ベッド本来の機能（睡眠）を妨げないように、ここではイベントをキャンセルしない
+                // ベッド本来の機能（睡眠）を妨げないように、ここではイベントをキャンセルしない
             }
         }
 
@@ -747,9 +753,26 @@ public class ModEvents {
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
+        // 死亡によるリスポーンの場合のみ実行
         if (!event.isWasDeath()) return;
 
-        // 退避させていた禁忌アイテムを、新しいプレイヤーに戻す
+        // 「古い」プレイヤーインスタンスからNBTデータを取得
+        CompoundTag originalData = event.getOriginal().getPersistentData();
+        // 「新しい」プレイヤーインスタンスのNBTデータを取得
+        CompoundTag newData = event.getEntity().getPersistentData();
+
+        // 試練に関するすべてのデータを、手動で、確実にコピーする
+        if (originalData.contains(PurificationAbility.SURVIVAL_TIMER_TAG)) {
+            newData.putInt(PurificationAbility.SURVIVAL_TIMER_TAG, originalData.getInt(PurificationAbility.SURVIVAL_TIMER_TAG));
+        }
+        if (originalData.contains(PurificationAbility.SURVIVAL_MAX_TICKS_TAG)) {
+            newData.putInt(PurificationAbility.SURVIVAL_MAX_TICKS_TAG, originalData.getInt(PurificationAbility.SURVIVAL_MAX_TICKS_TAG));
+        }
+        if (originalData.contains(PurificationAbility.TRIAL_PENALTY_PENDING_TAG)) {
+            newData.putBoolean(PurificationAbility.TRIAL_PENALTY_PENDING_TAG, originalData.getBoolean(PurificationAbility.TRIAL_PENALTY_PENDING_TAG));
+        }
+
+
         List<ItemStack> keptItems = FORBIDDEN_ITEM_KEEPER.remove(event.getOriginal().getUUID());
         if (keptItems != null) {
             for (ItemStack stack : keptItems) {

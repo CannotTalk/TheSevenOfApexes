@@ -89,7 +89,6 @@ public abstract class AbstractContainerMenuMixin {
                     ordinal = 0),
             cancellable = true)
     private void Mixin$PreventQuickMove(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci) {
-        // (このメソッドは変更なし)
         if (slotId < 0 || slotId >= this.slots.size()) return;
 
         Slot sourceSlot = this.slots.get(slotId);
@@ -119,7 +118,6 @@ public abstract class AbstractContainerMenuMixin {
                     ordinal = 0
             ), cancellable = true)
     private void Mixin$BeforeSafeTake(int slotId, int button, ClickType clickType, Player player, CallbackInfo ci, @Local(name = "slot3")Slot slot3) {
-        // (このメソッドは変更なし)
         if (slotId < 0) return;
 
         // シンプル捨て
@@ -134,7 +132,6 @@ public abstract class AbstractContainerMenuMixin {
                     target = "Lnet/minecraft/world/entity/player/Inventory;add(Lnet/minecraft/world/item/ItemStack;)Z",
                     ordinal = 0))
     private boolean Mixin$ModifyCondOnSwap(boolean original, @Local(name = "itemstack7")ItemStack itemstack7, @Local(name = "inventory")Inventory inventory, @Local(argsOnly = true)Player player) {
-        // (このメソッドは変更なし)
         if(!original && itemstack7.getItem() instanceof ForbiddenItem){
             for(int i=0;i<inventory.items.size();i++){
                 int slotNum = inventory.items.size() - 1 - i;

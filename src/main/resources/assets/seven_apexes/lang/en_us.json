@@ -113,6 +113,8 @@
   "message.seven_apexes.barge_timer": "Returning to the mortal realm in... %s",
   "message.seven_apexes.forbidden_cannot_discard": "A strange power prevents you from letting go.",
   "message.seven_apexes.endless_insomnia_cant_sleep": "§4Tortured by endless sleepless nights...",
+  "message.seven_apexes.trial_penalty": "§cYour failure has extended the trial's duration... You must survive longer to prove your worth.",
+  "message.seven_apexes.trial_failed": "The abyss rejects the unworthy. You have lost your grip on the trial.",
 
   "message.seven_apexes.altar_no_curse": "§cYou still know nothing of the curse...",
   "message.seven_apexes.altar_invalid_offering": "§4The ritual cannot be performed without a sacrifice...",

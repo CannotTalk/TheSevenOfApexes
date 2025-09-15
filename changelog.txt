@@ -1,27 +1,9 @@
-v1.2.0
+v1.2.1
 
-+ New items
-    + Heart of the Abyss[Forbidden]
-    + Reversal Artifact[Forbidden]
-    + These items cannot be obtained through normal means and are bestowed through a ritual.
+~ If you die during the trial,
+  Reset all trial -> Continue from the survival trial with penalties applied.
 
-+ New Abilities
-    + Almost Forbidden Rarity Items got own "Reverse" Ability.
-
-+ Enhanced Boss
-    + The art of reversal will eventually shake the world,
-        turning even bosses upside down and granting them modest enhancements.
-
-+ Advancements!
-    + The Seven of Apexes
-    + The First Sin
-    + Seeker of the Abyss
-    + The Cursed One4
-    + Hope or Despair
-    + Transcender of Logic
-    + Trial of Survival
-    + Master of Curses
-    + First Step to Freedom
-
-~ Number of “Pandora's Box” that can be crafted at once
-    1 -> 7
+> Bug Fixes
+    > Fixed “Heart of the Abyss” not to appear from the “Pandora's Box”
+    > Fixed an issue right-clicking "Altar of the Banishment" while sneaking to trigger the ritual.
+    > Fixed the timer continued running even after death.
