@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes.abilities.forbidden;
 
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.ardcameg.thesevenofapexes.item.ModItems;
 import net.ardcameg.thesevenofapexes.util.BuffItemUtils;
 import net.minecraft.ChatFormatting;
@@ -100,6 +101,7 @@ public final class DeathsPremonitionAbility {
                 player.setHealth(player.getMaxHealth());
                 player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 2, 127, false, false));
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 200, 2, false, true));
+                AdvancementTriggers.grantAdvancement(player, "reversed_deaths_premonition");
             }
         }
     }

@@ -39,7 +39,9 @@ public final class WalkingAnathemaAbility {
         for (LivingEntity target : targets) {
             // ダメージソースを「魔法」や「間接的なもの」にすることで、
             // プレイヤーが直接攻撃したと見なされないようにする
-            target.hurt(player.damageSources().magic(), processDamage);
+            float maxDamage = target.getHealth() - 1.0F; // 瀕死どまり
+            float actualDamage = Math.min(maxDamage, processDamage);
+            target.hurt(player.damageSources().magic(), actualDamage);
         }
     }
 }

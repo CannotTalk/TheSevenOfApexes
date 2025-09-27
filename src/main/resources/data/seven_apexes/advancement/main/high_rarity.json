@@ -1,0 +1,22 @@
+{
+  "parent": "seven_apexes:main/root",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:epic_pack"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.high_rarity.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.high_rarity.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

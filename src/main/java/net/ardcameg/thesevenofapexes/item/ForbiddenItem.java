@@ -32,7 +32,10 @@ public class ForbiddenItem extends Item {
 
         boolean isReversed = ReversalArtifactAbility.checkForbiddenReversed(player);
 
-        if (isReversed && pStack.getItem() != ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get()) {
+        if (isReversed && !(
+                pStack.getItem() == ModItems.FORBIDDEN_REVERSAL_ARTIFACT.get()
+                || pStack.getItem() == ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get()
+        )) {
             // 反転時はレアリティ表示の色を変え、状態を示すテキストを追加
             pTooltipComponents.add(Component.translatable("tooltip.seven_apexes.forbidden_rarity_reversed").withStyle(ChatFormatting.GOLD));
             pTooltipComponents.add(Component.translatable("tooltip.seven_apexes.status_reversed").withStyle(ChatFormatting.GREEN));

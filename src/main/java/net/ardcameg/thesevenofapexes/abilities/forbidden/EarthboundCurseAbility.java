@@ -28,7 +28,7 @@ public final class EarthboundCurseAbility {
             // Y軸（垂直方向）の移動量のみを0にして、水平方向の移動は維持する
             entity.setDeltaMovement(currentMotion.x, 0, currentMotion.z);
         }else {
-            entity.setDeltaMovement(currentMotion.x, currentMotion.y * (itemCount + 1), currentMotion.z);
+            // Do nothing
         }
     }
 }

@@ -1,5 +1,6 @@
 package net.ardcameg.thesevenofapexes;
 
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -419,7 +420,7 @@ public class Config {
                 .defineInRange("unstoppableImpulseExplosionPower", 6.0f, 1.0f, 12.0f);
 
         pactOfDecayIntervalTicks = BUILDER
-                .comment("The interval in ticks at which Pact of Decay triggers. (20 ticks = 1 second)")
+                .comment("The interval in ticks at which Pact of Decay triggers.")
                 .defineInRange("pactOfDecayIntervalTicks", 200, 20, 1200);
 
         whispersOfTheVoidRequiredTicks = BUILDER
@@ -438,6 +439,9 @@ public class Config {
         heartOfAbyssThirdRequire = BUILDER
                 .comment("The number of forbidden rarity items required for “Heart of the Abyss” to grant its 3rd buff")
                 .defineInRange("heartOfAbyssThirdRequire", 6, 0, 64);
+        heartOfAbyssFourthRequire = BUILDER
+                .comment("The number of forbidden rarity items required for “Heart of the Abyss” to grant it 4th buff")
+                .defineInRange("heartOfAbyssFourthRequire", 9, 0, 64);
 
         ultimateArtifactThreshold = BUILDER
                 .comment("Number of unique forbidden items a player must have held simultaneously to qualify for an ultimate artifact.")
@@ -445,7 +449,7 @@ public class Config {
 
         finalTrialDurationTicks = BUILDER
                 .comment("The duration in ticks a player must survive while holding all forbidden items to re-qualify for an ultimate artifact.")
-                .defineInRange("finalTrialDurationTicks", 24000, 1200, 72000); // Default: 20 minutes (1 day)
+                .defineInRange("finalTrialDurationTicks", 24000, 0, 72000); // Default: 20 minutes (1 day)
 
         BUILDER.pop();
     }
@@ -459,6 +463,7 @@ public class Config {
     public static final ModConfigSpec.IntValue heartOfAbyssFirstRequire;
     public static final ModConfigSpec.IntValue heartOfAbyssSecondRequire;
     public static final ModConfigSpec.IntValue heartOfAbyssThirdRequire;
+    public static final ModConfigSpec.IntValue heartOfAbyssFourthRequire;
     public static final ModConfigSpec.IntValue ultimateArtifactThreshold;
     public static final ModConfigSpec.IntValue finalTrialDurationTicks;
 

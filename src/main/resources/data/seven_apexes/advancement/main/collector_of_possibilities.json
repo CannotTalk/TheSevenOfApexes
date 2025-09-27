@@ -1,0 +1,30 @@
+{
+  "parent": "seven_apexes:main/hope_or_despair",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:legendary_pack"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.collector_of_possibilities.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.collector_of_possibilities.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {
+    "opened_random_pack": { "trigger": "minecraft:impossible" },
+    "opened_rare_pack": { "trigger": "minecraft:impossible" },
+    "opened_epic_pack": { "trigger": "minecraft:impossible" },
+    "opened_legendary_pack": { "trigger": "minecraft:impossible" },
+    "opened_pandoras_box": { "trigger": "minecraft:impossible" }
+  },
+  "requirements": [
+    [ "opened_random_pack" ],
+    [ "opened_rare_pack" ],
+    [ "opened_epic_pack" ],
+    [ "opened_legendary_pack" ],
+    [ "opened_pandoras_box" ]
+  ]
+}

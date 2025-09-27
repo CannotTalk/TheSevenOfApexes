@@ -5,11 +5,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.level.Level;
@@ -43,6 +45,19 @@ public final class WorldsRejectionAbility {
                 double z = wither.getZ() + Math.sin(angle) * 3.0;
                 skeleton.setPos(x, wither.getY() + 1, z);
                 level.addFreshEntity(skeleton);
+            }
+        }
+        if (level.random.nextFloat() < 0.05f) {
+            int spawnCount = 1 + level.random.nextInt(3);
+            for (int i = 0; i < spawnCount; i++) {
+                LightningBolt lightningBolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+                double angle = level.random.nextDouble() * 2 * Math.PI;
+                double xDis = 1 + level.random.nextInt(5) + level.random.nextDouble();
+                double zDis = 1 + level.random.nextInt(5) + level.random.nextDouble();
+                double x = wither.getX() + Math.cos(angle) * xDis;
+                double z = wither.getZ() + Math.sin(angle) * zDis;
+                lightningBolt.setPos(x, target.getY(), z);
+                level.addFreshEntity(lightningBolt);
             }
         }
     }

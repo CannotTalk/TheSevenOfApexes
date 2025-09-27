@@ -2,9 +2,11 @@ package net.ardcameg.thesevenofapexes.abilities.epic;
 
 import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,6 +48,7 @@ public final class GoliathsGavelAbility {
                 entity != player && entity != initialTarget && entity.isAlive()
         );
 
+        int attackedTargets = 0;
         // --- 3. 範囲ダメージとノックバックを適用 ---
         for (LivingEntity target : targets) {
             target.hurt(player.damageSources().playerAttack(player), areaDamage);
@@ -53,6 +56,11 @@ public final class GoliathsGavelAbility {
             // ノックバック処理
             Vec3 knockbackDir = target.position().subtract(player.position()).normalize();
             target.knockback(0.5 * finalCount, knockbackDir.x, knockbackDir.z);
+
+            attackedTargets++;
+            if(attackedTargets >= 5){
+                AdvancementTriggers.grantAdvancement((ServerPlayer) player, "overwhelming_force");
+            }
         }
 
         // --- 4. 演出 ---

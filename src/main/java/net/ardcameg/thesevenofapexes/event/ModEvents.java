@@ -73,7 +73,7 @@ public class ModEvents {
     public static boolean reverseForbidden = false;
 
     /**
-     * 任務1：プレイヤーがダメージを受けた"後"の処理
+     * プレイヤーがダメージを受けた"後"の処理
      */
     @SubscribeEvent
     public static void onPlayerDamaged(LivingDamageEvent.Post event) {
@@ -115,7 +115,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務2：エンティティがダメージを受ける"前"の処理
+     * エンティティがダメージを受ける"前"の処理
      */
     @SubscribeEvent
     public static void onPreLivingDamage(LivingDamageEvent.Pre event) {
@@ -154,15 +154,6 @@ public class ModEvents {
             int prideCount = baseCounts.getOrDefault(ModItems.LEGENDARY_PRIDE.get(), 0);
             int prideMultiplier = PrideAbility.calculateEffectMultiplier(prideCount);
 
-            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
-            if (bargeCount > 0) {
-                if (player.getHealth() - event.getNewDamage() <= 0) {
-                    event.setNewDamage(0f);
-                    FerrymansBargeAbility.startFerry(player, bargeCount, prideMultiplier);
-                    return;
-                }
-            }
-
             int scarredGrailCount = baseCounts.getOrDefault(ModItems.EPIC_SCARRED_GRAIL.get(), 0);
             if (scarredGrailCount > 0) {
                 if (!player.getPersistentData().getBoolean("TAKING_GRAIL_DAMAGE")) {
@@ -170,6 +161,22 @@ public class ModEvents {
                     if (event.getNewDamage() == 0) {
                         return;
                     }
+                }
+            }
+
+            int hourglassCount = baseCounts.getOrDefault(ModItems.EPIC_REVERSAL_HOURGLASS.get(), 0);
+            if (hourglassCount > 0) {
+                if (event.getSource().getEntity() != null){
+                    ReversalHourglassAbility.onPrePlayerDamage(event, player, event.getSource().getEntity(), hourglassCount, prideMultiplier);
+                }
+            }
+
+            int bargeCount = baseCounts.getOrDefault(ModItems.EPIC_FERRYMANS_BARGE.get(), 0);
+            if (bargeCount > 0) {
+                if (player.getHealth() - event.getNewDamage() <= 0) {
+                    event.setNewDamage(0f);
+                    FerrymansBargeAbility.startFerry(player, bargeCount, prideMultiplier);
+                    return;
                 }
             }
 
@@ -182,7 +189,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務3：プレイヤーが存在する間、毎tick呼び出される処理
+     * プレイヤーが存在する間、毎tick呼び出される処理
      */
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
@@ -342,7 +349,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務4：Mobが倒された時の処理
+     * Mobが倒された時の処理
      */
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
@@ -396,7 +403,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務5：ブロックが破壊された瞬間の処理
+     * ブロックが破壊された瞬間の処理
      */
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
@@ -438,7 +445,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務6：プレイヤーがリスポーンした瞬間の処理
+     * プレイヤーがリスポーンした瞬間の処理
      */
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
@@ -456,7 +463,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務7-A：エンティティが死亡する直前の処理【蘇生判定】
+     * A: エンティティが死亡する直前の処理【蘇生判定】
      * 最も高い優先度で実行され、蘇生を試みる。
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -502,7 +509,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務7-B：エンティティの死亡が確定した"後"の処理【後処理】
+     * B: エンティティの死亡が確定した"後"の処理【後処理】
      * 最も低い優先度で実行される。
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -531,7 +538,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務8：プレイヤーが敵を攻撃し、ダメージ計算が終わった"後"の処理
+     * プレイヤーが敵を攻撃し、ダメージ計算が終わった"後"の処理
      */
     @SubscribeEvent
     public static void onPlayerAttackPostDamage(LivingDamageEvent.Post event) {
@@ -581,7 +588,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務9：ワールドがtickするごとの処理 (スタン解除)
+     * ワールドがtickするごとの処理 (スタン解除)
      */
     @SubscribeEvent
     public static void onWorldTick(LevelTickEvent.Post event) {
@@ -596,7 +603,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務11：エンティティがワールドに出現した瞬間の処理
+     * エンティティがワールドに出現した瞬間の処理
      */
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinLevelEvent event) {
@@ -622,7 +629,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務12：プレイヤーが体力を回復する瞬間の処理
+     * プレイヤーが体力を回復する瞬間の処理
      */
     @SubscribeEvent
     public static void onPlayerHeal(LivingHealEvent event) {
@@ -644,7 +651,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務13：プレイヤーの攻撃がクリティカルヒットか判定される瞬間の処理
+     * プレイヤーの攻撃がクリティカルヒットか判定される瞬間の処理
      */
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onPlayerCriticalHit(CriticalHitEvent event) {
@@ -673,7 +680,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務16：プレイヤーがブロックを右クリックした瞬間の処理
+     * プレイヤーがブロックを右クリックした瞬間の処理
      */
     @SubscribeEvent
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
@@ -741,7 +748,7 @@ public class ModEvents {
 
 
     /**
-     * 任務19：サーバーのリソースがリロードされる際に、我々のリスナーを登録する
+     * サーバーのリソースがリロードされる際に、我々のリスナーを登録する
      */
     @SubscribeEvent
     public static void onAddReloadListener(AddReloadListenerEvent event) {
@@ -749,7 +756,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務：プレイヤーがリスポーンする際の処理
+     * プレイヤーがリスポーンする際の処理
      */
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event) {
@@ -782,7 +789,7 @@ public class ModEvents {
     }
 
     /**
-     * 任務：エンティティがジャンプしようとする瞬間の処理
+     * エンティティがジャンプしようとする瞬間の処理
      */
     @SubscribeEvent
     public static void onPlayerJump(LivingEvent.LivingJumpEvent event) {
@@ -801,6 +808,7 @@ public class ModEvents {
         }
     }
 
+    // "Sloth" のハンドラ
     private static void handleSloth(Player player, int baseSlothCount, int prideMultiplier) {
         UUID playerUUID = player.getUUID();
         Vec3 currentPos = player.position();
@@ -828,6 +836,7 @@ public class ModEvents {
         PLAYER_LAST_POSITION.put(playerUUID, currentPos);
     }
 
+    // "Phoenix Feather" のハンドラ
     private static void handlePhoenixFeatherDebuff(Player player) {
         if (player.level().isClientSide || !(player instanceof ServerPlayer serverPlayer)) return;
 

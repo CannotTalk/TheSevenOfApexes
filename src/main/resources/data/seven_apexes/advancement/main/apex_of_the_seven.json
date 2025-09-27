@@ -1,0 +1,22 @@
+{
+  "parent": "seven_apexes:main/perfect_equilibrium",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:legendary_pride",
+      "nbt": "{Enchantments:[{}]}"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.apex_of_the_seven.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.apex_of_the_seven.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

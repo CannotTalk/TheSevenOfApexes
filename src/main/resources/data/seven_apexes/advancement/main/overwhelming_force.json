@@ -1,0 +1,22 @@
+{
+  "parent": "seven_apexes:main/high_rarity",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:epic_goliaths_gavel"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.overwhelming_force.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.overwhelming_force.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

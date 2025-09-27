@@ -104,7 +104,8 @@ public final class PurificationAbility {
         if (!player.getInventory().add(reward)) {
             player.drop(reward, false);
         }
-        String advancementId = reward.is(ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get()) ? "master_of_curses" : "transcender_of_logic";
+        String advancementId = reward.is(ModItems.FORBIDDEN_HEART_OF_THE_ABYSS.get())
+                ? "master_of_curses" : "transcender_of_logic";
         AdvancementTriggers.grantAdvancement(player, advancementId);
         player.getPersistentData().putInt(AdvancementTriggers.MAX_FORBIDDEN_HELD_TAG, 0);
     }

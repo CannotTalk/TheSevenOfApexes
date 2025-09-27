@@ -19,9 +19,11 @@ public final class HeartOfAbyssAbility {
     private static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "heart_of_the_abyss_attack_speed");
     private static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "heart_of_the_abyss_attack_damage");
 
+
     private static final int firstRequired = Config.heartOfAbyssFirstRequire.get();
     private static final int secondRequired = Config.heartOfAbyssSecondRequire.get();
     private static final int thirdRequired = Config.heartOfAbyssThirdRequire.get();
+    private static final int fourthRequired = Config.heartOfAbyssFourthRequire.get();
 
     public static void update(ServerPlayer player) {
         clear(player);
@@ -66,6 +68,18 @@ public final class HeartOfAbyssAbility {
         if (attackDamageAttr != null && count >= thirdRequired) {
             AttributeModifier modifier = new AttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, 0.25 * (count - (thirdRequired - 1)), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
             attackDamageAttr.addTransientModifier(modifier);
+        }
+        if (count >= fourthRequired) {
+            speedAttr.removeModifier(SPEED_MODIFIER_ID);
+            attackSpeedAttr.removeModifier(ATTACK_SPEED_MODIFIER_ID);
+            attackDamageAttr.removeModifier(ATTACK_DAMAGE_MODIFIER_ID);
+
+            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 10, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 10, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.JUMP, 10, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 10, 1, false, false));
+            player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 10, 0, false, false));
         }
         // 他のバフ（ダメージ軽減、生命吸収など）は、新しいイベントハンドラが必要になるため、後で追加します
     }

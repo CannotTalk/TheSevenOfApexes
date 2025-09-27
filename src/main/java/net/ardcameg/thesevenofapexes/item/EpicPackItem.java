@@ -1,6 +1,8 @@
 package net.ardcameg.thesevenofapexes.item;
 
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.ardcameg.thesevenofapexes.util.PackLootManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,6 +27,13 @@ public class EpicPackItem extends Item {
             if (!player.getAbilities().instabuild) {
                 itemStack.shrink(1);
             }
+        }
+
+        //実績を達成
+        if (player instanceof ServerPlayer serverPlayer) {
+            AdvancementTriggers.grantAdvancement(serverPlayer, "high_rarity");
+
+            AdvancementTriggers.grantCriterion(serverPlayer, "collector_of_possibilities", "opened_epic_pack");
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));

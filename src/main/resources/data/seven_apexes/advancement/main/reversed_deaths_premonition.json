@@ -1,0 +1,22 @@
+{
+  "parent": "seven_apexes:main/transcender_of_logic",
+  "display": {
+    "icon": {
+      "id": "seven_apexes:forbidden_deaths_premonition"
+    },
+    "title": {
+      "translate": "advancements.seven_apexes.reversed_deaths_premonition.title"
+    },
+    "description": {
+      "translate": "advancements.seven_apexes.reversed_deaths_premonition.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

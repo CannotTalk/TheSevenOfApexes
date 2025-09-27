@@ -27,6 +27,13 @@ public class PandorasBoxItem extends Item {
             }
         }
 
+        //実績を達成
+        if (player instanceof ServerPlayer serverPlayer) {
+            AdvancementTriggers.grantAdvancement(serverPlayer, "high_rarity");
+
+            AdvancementTriggers.grantCriterion(serverPlayer, "collector_of_possibilities", "opened_pandoras_box");
+        }
+
         player.awardStat(Stats.ITEM_USED.get(this));
         return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
     }

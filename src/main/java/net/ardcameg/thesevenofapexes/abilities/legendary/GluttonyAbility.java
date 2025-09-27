@@ -2,7 +2,11 @@ package net.ardcameg.thesevenofapexes.abilities.legendary;
 
 import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
+import net.ardcameg.thesevenofapexes.block.ModBlocks;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -63,7 +67,14 @@ public class GluttonyAbility {
 
         currentGauge += finalGaugeValue;
 
-        // --- 4. レベルアップ判定 (ループで複数レベルアップに対応) ---
+        // --- 4. 表示 ---
+        StringBuilder gaugeIncrement = new StringBuilder();
+        gaugeIncrement.append(ChatFormatting.GOLD).append("+");
+        gaugeIncrement.append(ChatFormatting.GOLD).append(finalGaugeValue);
+        // player.sendSystemMessage(Component.literal(gaugeIncrement.toString()));
+        Minecraft.getInstance().player.displayClientMessage(Component.literal(gaugeIncrement.toString()), true);
+
+        // --- 5. レベルアップ判定 (ループで複数レベルアップに対応) ---
         while (true) {
             int requiredGauge = BASE_GAUGE_THRESHOLD + (currentLevel * GAUGE_THRESHOLD_INCREASE_PER_LEVEL);
 
@@ -77,7 +88,7 @@ public class GluttonyAbility {
             }
         }
 
-        // --- 5. データを保存 ---
+        // --- 6. データを保存 ---
         player.getPersistentData().putInt(GLUTTONY_GAUGE_TAG, currentGauge);
         player.getPersistentData().putInt(GLUTTONY_LEVEL_TAG, currentLevel);
     }
@@ -91,12 +102,15 @@ public class GluttonyAbility {
 
     // Add: Some blocks to increase the gauge for “Gluttony.”
     private static int getGaugeValueForBlock(Block block) {
-        if (block.equals(Blocks.DIRT) || block.equals(Blocks.GRASS_BLOCK) ||block.equals(Blocks.SAND) || block.equals(Blocks.GRAVEL))
+        if (block.equals(Blocks.DIRT) || block.equals(Blocks.GRASS_BLOCK)
+                ||block.equals(Blocks.SAND) || block.equals(Blocks.GRAVEL))
             return 1;
-        if (block.equals(Blocks.STONE) || block.equals(Blocks.COBBLESTONE))
+        if (block.equals(Blocks.STONE) || block.equals(Blocks.COBBLESTONE) || block.equals(Blocks.SMOOTH_STONE))
             return 2;
-        if (block.equals(Blocks.OAK_LOG) || block.equals(Blocks.SPRUCE_LOG))
+        if (block.equals(Blocks.OAK_LOG) || block.equals(Blocks.SPRUCE_LOG) || block.equals(Blocks.BIRCH_LOG))
             return 3;
+        if (block.equals(Blocks.OAK_WOOD) || block.equals(Blocks.SPRUCE_WOOD) || block.equals(Blocks.BIRCH_WOOD))
+            return 8;
         if (block.equals(Blocks.IRON_ORE) || block.equals(Blocks.DEEPSLATE_IRON_ORE))
             return 10;
         if (block.equals(Blocks.DIAMOND_ORE) || block.equals(Blocks.DEEPSLATE_DIAMOND_ORE))
@@ -107,6 +121,8 @@ public class GluttonyAbility {
             return 50;
         if (block.equals(Blocks.AMETHYST_BLOCK))
             return 100;
+        if(block.equals(ModBlocks.ALTAR_OF_BANISHMENT.get()))
+            return 5000;
         return 0;
     }
 

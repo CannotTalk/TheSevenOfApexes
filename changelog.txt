@@ -1,9 +1,64 @@
-v1.2.1
+v1.3.0
 
-~ If you die during the trial,
-  Reset all trial -> Continue from the survival trial with penalties applied.
++ New Advancement(s)
+    + Collector of Possibilities
+    + Apex of the Seven
+    + Reverse Card
+    + Death is the Beginning
+    + Perfect Equilibrium
+    + Rarity High
 
-> Bug Fixes
-    > Fixed “Heart of the Abyss” not to appear from the “Pandora's Box”
-    > Fixed an issue right-clicking "Altar of the Banishment" while sneaking to trigger the ritual.
-    > Fixed the timer continued running even after death.
++ New Language(s)
+    + Japanese
+
+~ General Update
+    + "Gluttony" has slightly overcome its pickiness.
+        + Birch Log (3)
+        + Oak Wood (8)
+        + Spruce Wood (8)
+        + Birch Wood (8)
+        + Altar of Banishment (5,000)
+
+    + When eating blocks by "gluttony" ability, the gauge increase amount is now displayed on the action bar.
+
+    ~ When an entity takes lethal damage from “Walking Anathema”
+        Die -> Remain at 1 HP
+
+    ~ Earthbound Curse (Reversed)
+        [Old]
+            * Your jump height is multiplied by (X+1). X is the number of Earthbound Curses you possess.
+            * Your fall damage is always set to 1.
+        [New]
+            * (The 1st Ability is deleted.)
+            * Your fall damage is always set to 1.
+
+    ~ Heart of Abyss
+        [New]
+            Level 0:
+                * Mining Fatigue I
+                * Slowness I
+            Level 1:
+                * Movement Speed +10%
+            Level 2:
+                * Level 1 Effect
+                * Attack Speed
+            Level 3:
+                * Level 1 Effect
+                * Level 2 Effect
+                * Attack Damage +25%
+            Level 4:
+                * Speed II
+                * Haste II
+                * Resistance II
+                * Jump Boost II
+                * Strength II
+                * Regeneration I
+
+
+> Bug(s) Fixes
+    > Removed of debugging processing for methods confirmed to function normally.
+    > Fixed an issue where the ability of "Hourglass of Reversal" did not activate correctly.
+    > Fixed an issue where some advancements could not be properly granted.
+    > Fixed an issue where “Reversed” was displayed in the tooltip for “Heart of Abyss” during the Reversed state.
+
+* Known Bug(s)

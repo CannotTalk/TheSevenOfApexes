@@ -2,9 +2,11 @@ package net.ardcameg.thesevenofapexes.abilities.legendary;
 
 import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -70,6 +72,10 @@ public final class SunlightSacredSealAbility {
             attackDamage.removeModifier(ATTACK_DAMAGE_ID);
             movementSpeed.removeModifier(MOVEMENT_SPEED_ID);
             attackSpeed.removeModifier(ATTACK_SPEED_ID);
+        }
+
+        if(isSunActive && hasMoonSeal){
+            AdvancementTriggers.grantAdvancement( (ServerPlayer)player, "perfect_equilibrium");
         }
     }
 

@@ -2,7 +2,9 @@ package net.ardcameg.thesevenofapexes.abilities.epic;
 
 import net.ardcameg.thesevenofapexes.Config;
 import net.ardcameg.thesevenofapexes.TheSevenOfApexes;
+import net.ardcameg.thesevenofapexes.event.AdvancementTriggers;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,7 +28,7 @@ public final class ReversalHourglassAbility {
         if (hourglassCount <= 0 || !(attacker instanceof LivingEntity livingAttacker)) return;
 
         // 反射ダメージによる無限ループを防ぐ
-        if (event.getSource().typeHolder().is(DamageTypes.THORNS)) return; // バニラのとげや我々の反射を弾く
+        if (event.getSource().typeHolder().is(DamageTypes.THORNS)) return; // バニラのとげ(や我々の反射)を弾く
 
         int finalCount = hourglassCount * prideMultiplier;
 
@@ -36,8 +38,9 @@ public final class ReversalHourglassAbility {
         if (RANDOM.nextFloat() < reflectChance) {
             // --- 反射成功！ ---
             float damageToReflect = event.getNewDamage();
-            event.setNewDamage(0); // ダメージを完全にキャンセル
+            event.setNewDamage(0.0f); // ダメージを完全にキャンセル
             livingAttacker.hurt(player.damageSources().thorns(player), damageToReflect);
+            AdvancementTriggers.grantAdvancement((ServerPlayer) player, "reverse_card");
             // TODO: 反射成功の派手なエフェクト
         }
         // 反射失敗時のカウンターダメージは Post イベントで行うので、ここでは何もしない

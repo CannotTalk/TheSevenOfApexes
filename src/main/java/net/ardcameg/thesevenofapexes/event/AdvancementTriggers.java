@@ -61,6 +61,39 @@ public class AdvancementTriggers {
             }
         }
 
+        // 伝説級をすべて持ち、全て列にセットされているか？
+        AdvancementHolder apexAdvancement = player.getServer().getAdvancements().get(ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "main/apex_of_the_seven"));
+        if (apexAdvancement != null && !player.getAdvancements().getOrStartProgress(apexAdvancement).isDone()) {
+
+            // 1. 必要な全ての伝説級アイテムのリストを定義
+            Set<Item> requiredLegendaries = Set.of(
+                    ModItems.LEGENDARY_PRIDE.get(),
+                    ModItems.LEGENDARY_ENVY.get(),
+                    ModItems.LEGENDARY_WRATH.get(),
+                    ModItems.LEGENDARY_SLOTH.get(),
+                    ModItems.LEGENDARY_GREED.get(),
+                    ModItems.LEGENDARY_GLUTTONY.get(),
+                    ModItems.LEGENDARY_LUST.get(),
+                    ModItems.LEGENDARY_SUNLIGHT_SACRED_SEAL.get(),
+                    ModItems.LEGENDARY_MOONLIGHT_SACRED_SEAL.get()
+            );
+
+            // 2. 現在のバフ列にあるアイテムのセットを作成
+            Set<Item> itemsInBuffRow = new HashSet<>();
+            for (int i = 9; i <= 17; i++) {
+                ItemStack stack = player.getInventory().getItem(i);
+                if (!stack.isEmpty()) {
+                    itemsInBuffRow.add(stack.getItem());
+                }
+            }
+
+            // 3. バフ列のセットが必要なアイテムを全て含んでいるか確認
+            if (itemsInBuffRow.containsAll(requiredLegendaries)) {
+                grantAdvancement(player, "apex_of_the_seven");
+            }
+        }
+
+
         checkForTrialStart(player, uniqueForbiddenItems);
     }
 
@@ -71,13 +104,7 @@ public class AdvancementTriggers {
         boolean isTrialCompleted = data.getBoolean(PurificationAbility.SURVIVAL_TRIAL_COMPLETED_TAG);
 
         if (hasObtainedUltimate && !isTimerRunning && !isTrialCompleted) {
-            // --- ここからデバッグログ ---
-            // このメッセージがコンソールに出力されれば、最初の3条件はクリアしています。
-            System.out.println("[TRIAL DEBUG] Player " + player.getName().getString() + " is eligible to check for trial start.");
-
             if (isReadyForSecondTrial(currentForbidden)) {
-                // このメッセージが出力されれば、全ての条件がクリアされ、試練が開始される
-                System.out.println("[TRIAL DEBUG] All conditions met! Starting trial.");
 
                 PurificationAbility.startSurvivalTrial(player);
 
@@ -102,30 +129,42 @@ public class AdvancementTriggers {
 
         boolean readyForTrial = currentForbidden.containsAll(allRequiredForbidden);
 
-        // --- ここからデバッグログ ---
-        // このログは、条件4の成否を詳細に教えてくれます。
-        if (!readyForTrial) {
-            System.out.println("[TRIAL DEBUG] isReadyForSecondTrial FAILED.");
-            List<Item> missingItems = new ArrayList<>(allRequiredForbidden);
-            missingItems.removeAll(currentForbidden);
-            System.out.println(" >>>> Required (" + allRequiredForbidden.size() + "): " + allRequiredForbidden.stream().map(i -> i.toString()).collect(Collectors.joining(", ")));
-            System.out.println(" >>>> Player Has (" + currentForbidden.size() + "): " + currentForbidden.stream().map(i -> i.toString()).collect(Collectors.joining(", ")));
-            System.out.println(" >>>> MISSING ("+ missingItems.size() +"): " + missingItems.stream().map(i -> i.toString()).collect(Collectors.joining(", ")));
-        }
-        // --- デバッグログここまで ---
-
         return readyForTrial;
     }
 
+    /**
+     * 指定したプレイヤーに指定した進捗を達成させる
+     * この進捗が要求する全ての条件を達成させることで、進捗を完了させる
+     * @param player 対象プレイヤー
+     * @param advancementId 進捗のID
+     */
     public static void grantAdvancement(ServerPlayer player, String advancementId) {
         AdvancementHolder advancement = player.getServer().getAdvancements().get(ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "main/" + advancementId));
         if (advancement != null) {
             AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
             if (!progress.isDone()) {
-                String firstCriterion = advancement.value().criteria().keySet().stream().findFirst().orElse(null);
-                if (firstCriterion != null) {
-                    player.getAdvancements().award(advancement, firstCriterion);
+                // この進捗が持つ全ての条件(criteria)を取得し、
+                // 「まだ達成されていないものだけ」をawardする
+                for (String criterion : progress.getRemainingCriteria()) {
+                    player.getAdvancements().award(advancement, criterion);
                 }
+            }
+        }
+    }
+
+    /**
+     * 指定された進捗の、指定された単一の条件（Criterion）を達成させる
+     * @param player 対象プレイヤー
+     * @param advancementId 進捗のID
+     * @param criterionId 条件のID
+     */
+    public static void grantCriterion(ServerPlayer player, String advancementId, String criterionId) {
+        AdvancementHolder advancement = player.getServer().getAdvancements().get(ResourceLocation.fromNamespaceAndPath(TheSevenOfApexes.MOD_ID, "main/" + advancementId));
+        if (advancement != null) {
+            AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
+            if (!progress.isDone()) {
+                // 指定されたcriterionを達成させる
+                progress.grantProgress(criterionId);
             }
         }
     }
